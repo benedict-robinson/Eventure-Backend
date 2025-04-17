@@ -4,30 +4,26 @@ import { EventInterface } from "../data/events";
 import { UserInterface } from "../data/users";
 
 export const seed = (
-    userData: UserInterface[],
-    eventsData: EventInterface[]
-  ) => {
-  return db
-    .query("BEGIN")
+  userData: UserInterface[],
+  eventsData: EventInterface[]
+) => {
+  const dropMyEventsPromise = db.query(
+    "DROP TABLE IF EXISTS user_my_events CASCADE"
+  );
+  const dropGoingPromise = db.query("DROP TABLE IF EXISTS user_going CASCADE");
+  const dropFavouritesPromise = db.query(
+    "DROP TABLE IF EXISTS user_favourites CASCADE"
+  );
+  return Promise.all([
+    dropFavouritesPromise,
+    dropGoingPromise,
+    dropMyEventsPromise,
+  ])
     .then(() => {
-      const dropMyEventsPromise = db.query(
-        `DROP TABLE IF EXISTS user_my_events`
-      );
-      const dropGoingPromise = db.query(`DROP TABLE IF EXISTS user_going`);
-      const dropFavouritesPromise = db.query(
-        `DROP TABLE IF EXISTS user_favourites`
-      );
-      return Promise.all([
-        dropFavouritesPromise,
-        dropGoingPromise,
-        dropMyEventsPromise,
-      ]);
+      return db.query("DROP TABLE IF EXISTS users CASCADE");
     })
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS users`);
-    })
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS events`);
+      return db.query(`DROP TABLE IF EXISTS events CASCADE`);
     })
     .then(() => {
       return db.query(`
@@ -55,19 +51,19 @@ export const seed = (
     })
     .then(() => {
       const createMyEventsPromise = db.query(`CREATE TABLE user_my_events (
-            my_events_id SERIAL PRIMARY KEY,
             user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-            event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+            event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+            PRIMARY KEY (user_id, event_id)
             )`);
       const createGoingPromise = db.query(`CREATE TABLE user_going (
-            going_id SERIAL PRIMARY KEY,
             user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-            event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+            event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+            PRIMARY KEY (user_id, event_id)
             )`);
       const createFavouritesPromise = db.query(`CREATE TABLE user_favourites (
-            favourite_id SERIAL PRIMARY KEY,
             user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-            event_id INT REFERENCES events(event_id) ON DELETE CASCADE
+            event_id INT REFERENCES events(event_id) ON DELETE CASCADE,
+            PRIMARY KEY (user_id, event_id)
             )`);
       return Promise.all([
         createFavouritesPromise,
@@ -76,31 +72,34 @@ export const seed = (
       ]);
     })
     .then(() => {
-      const insertEventsQuery = format(
-        "INSERT INTO events (api_event_id, name, location, date_and_time, tags, img, description, url) VALUES %L;",
-        eventsData.map(
-          ({
-            api_event_id,
-            name,
-            location,
-            date_and_time,
-            tags,
-            img,
-            description,
-            url,
-          }) => [
-            api_event_id,
-            name,
-            location,
-            date_and_time,
-            tags,
-            img,
-            description,
-            url,
-          ]
-        )
-      );
-      const insertEventsPromise = db.query(insertEventsQuery);
+
+        // DEBUG!
+    
+    //   const insertEventsQuery = format(
+    //     "INSERT INTO events (api_event_id, name, location, date_and_time, tags, img, description, url) VALUES %L;",
+    //     eventsData.map(
+    //       ({
+    //         api_event_id,
+    //         name,
+    //         location,
+    //         date_and_time,
+    //         tags,
+    //         img,
+    //         description,
+    //         url,
+    //       }) => [
+    //         api_event_id,
+    //         name,
+    //         location,
+    //         date_and_time,
+    //         tags,
+    //         img,
+    //         description,
+    //         url,
+    //       ]
+    //     )
+    //   );
+    //   const insertEventsPromise = db.query(insertEventsQuery);
       const insertUsersQuery = format(
         "INSERT INTO users (username, email, is_staff, image_url) VALUES %L;",
         userData.map(({ username, email, is_staff, image_url }) => [
@@ -111,7 +110,9 @@ export const seed = (
         ])
       );
       const insertUsersPromise = db.query(insertUsersQuery);
-      return Promise.all([insertEventsPromise, insertUsersPromise]);
+      //return insertEventsPromise
+      return insertUsersPromise
+      //return Promise.all([insertEventsPromise, insertUsersPromise]);
     })
     .then(() => {
       const insertMyEvents = format(
@@ -147,19 +148,15 @@ export const seed = (
       ]);
     })
     .then(() => {
-      return db.query("COMMIT");
-    })
-    .then(() => {
       console.log("✅ Seeding complete!");
     })
     .catch((err: unknown) => {
-      return db.query("ROLLBACK").then(() => {
         if (err instanceof Error) {
           console.error(err.message);
+          console.log(err);
         } else {
           console.error("Unknown error:", err);
         }
         throw err;
-      });
     });
 };
