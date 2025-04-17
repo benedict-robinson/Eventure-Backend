@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS eventure;
+
+CREATE DATABASE eventure;
