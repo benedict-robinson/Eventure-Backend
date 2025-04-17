@@ -1,5 +1,5 @@
 // Top-level event object
-interface EventInterface {
+export interface EventInterface {
   event_id?: number,
   api_event_id?: string;
   name: string;
@@ -205,4 +205,4 @@ const events: EventInterface[] = [
   },
 ];
 
-export default events
+export default events 

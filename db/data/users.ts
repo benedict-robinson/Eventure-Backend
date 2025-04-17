@@ -1,4 +1,4 @@
-interface UserInterface {
+export interface UserInterface {
     username: string,
     email?: string,
     is_staff: boolean,
