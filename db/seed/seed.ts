@@ -1,7 +1,12 @@
 const db = require("../connection.js");
 const format = require("pg-format");
+import { EventInterface } from "../data/events";
+import { UserInterface } from "../data/users";
 
-export const seed = ({ userData, eventsData }) => {
+export const seed = (
+    userData: UserInterface[],
+    eventsData: EventInterface[]
+  ) => {
   return db
     .query("BEGIN")
     .then(() => {
@@ -142,17 +147,19 @@ export const seed = ({ userData, eventsData }) => {
       ]);
     })
     .then(() => {
-        return db.query("COMMIT");
-      })
-      .then(() => {
-        console.log("✅ Seeding complete!");
-      })
-      .catch((err) => {
-        return db.query("ROLLBACK")
-          .then(() => {
-            console.error("❌ Seeding failed, rolled back.");
-            console.error(err);
-            throw err;
-          });
+      return db.query("COMMIT");
+    })
+    .then(() => {
+      console.log("✅ Seeding complete!");
+    })
+    .catch((err: unknown) => {
+      return db.query("ROLLBACK").then(() => {
+        if (err instanceof Error) {
+          console.error(err.message);
+        } else {
+          console.error("Unknown error:", err);
+        }
+        throw err;
       });
+    });
 };
