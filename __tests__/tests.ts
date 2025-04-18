@@ -13,8 +13,15 @@ await seed(users, events);
 
 describe("Test Seed Function", () => {
     test("Should insert 6 events into events table", () => {
-        return db.query("SELECT * FROM events").then(({rows}) => {
-            console.log(rows)
+        return db.query("SELECT * FROM events").then(({rows}: {rows: EventInterface[]}) => {
+            expect(rows.length).toBe(6)
+        })
+    })
+    test("Events should have correct keys", () => {
+        return db.query("SELECT * FROM events").then(({rows}: {rows: EventInterface[]}) => {
+            rows.forEach(event => {
+                expect(Object.keys(event)).toEqual([])
+            })
         })
     })
 })
