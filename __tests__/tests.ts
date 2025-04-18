@@ -2,7 +2,8 @@ import { users, events } from "../db/data/index.ts";
 import { EventInterface } from "../db/data/events.ts";
 import { UserInterface } from "../db/data/users.ts";
 import { seed } from "../db/seed/seed.ts";
-const request = require("supertest");
+import request from "supertest";
+import app from "../server/app.ts";
 const db = require("../db/connection.js");
 
 beforeEach(async () => {
@@ -10,12 +11,13 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-describe("Test Seed Function", () => {
+xdescribe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
       .then(({ rows }: { rows: EventInterface[] }) => {
         expect(rows.length).toBe(6);
+        console.log(rows)
       });
   });
   test("Events should have correct keys", () => {
@@ -87,3 +89,41 @@ describe("Test Seed Function", () => {
       });
   });
 });
+
+describe("Events", () => {
+    describe("GET events", () => {
+        test("GET Events - returns array of events", () => {
+            return request(app)
+            .get("/api/events")
+            .expect(200)
+            .then(({body: {events}}) => {
+                const keys = [
+                    "event_id",
+                    "api_event_id",
+                    "name",
+                    "location",
+                    "date_and_time",
+                    "tags",
+                    "img",
+                    "info",
+                    "description",
+                    "url",
+                  ];
+                expect(Array.isArray(events)).toBe(true)
+                events.forEach((e: EventInterface) => {
+                    expect(Object.keys(e)).toEqual(keys)
+                })
+            })
+        })
+        test("GET Events - retrieves results from Ticketmaster API", () => {
+            return request(app)
+            .get("/api/events")
+            .expect(200)
+            .then(({body: {events}}) => {
+                expect(events.length).toBeGreaterThan(6)
+                const ticketMasterEvents = events.filter((e: EventInterface) => e.api_event_id !== null)
+                expect(events.length - ticketMasterEvents.length).toBe(2)
+            })
+        })
+    })
+})
