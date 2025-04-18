@@ -29,7 +29,7 @@ export const seed = (
         return db.query(`
       CREATE TABLE events (
         event_id SERIAL PRIMARY KEY,
-        api_event_id VARCHAR(25),
+        api_event_id VARCHAR(25) UNIQUE,
         name VARCHAR(200) NOT NULL,
         location JSONB NOT NULL,
         date_and_time JSONB,
@@ -44,7 +44,7 @@ export const seed = (
         return db.query(`
             CREATE TABLE users (
             user_id SERIAL PRIMARY KEY,
-            username VARCHAR(20) NOT NULL,
+            username VARCHAR(20) NOT NULL UNIQUE,
             email VARCHAR(50),
             is_staff BOOLEAN NOT NULL,
             image_url TEXT
@@ -90,7 +90,7 @@ export const seed = (
             }) => [
               api_event_id || null,
               name,
-              location || {location: "Not Location Provided"},
+              location || {location: "No Location Provided"},
               date_and_time,
               formatArray(tags),
               img,

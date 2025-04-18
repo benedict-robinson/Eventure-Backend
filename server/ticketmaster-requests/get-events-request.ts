@@ -1,5 +1,6 @@
 import axios from "axios";
 require("dotenv").config({ path: "./.env.production" });
+import { formatDateAndTimeObj, formatImageObj } from "../../utils";
 
 let apiKey = process.env.API_KEY;
 
@@ -22,20 +23,23 @@ const getEvents: GetEventsRequest = {
 };
 
 export const getTicketmasterEvents = () => {
-  axios(getEvents).then(({ data: { _embedded: { events } } }) => {
+  return axios(getEvents).then(({ data: { _embedded: { events } } }) => {
     const trimmedEvents = events.map((e: any) => {
         return {
-            api_event_id: e.id,
             name: e.name,
-            location: e.place,
-            dates: e.dates,
-            tags: [e.classifications[0].segment.name, e.classifications[0].genre.name],
-            image: e.images[0],
-            info: e.info,
-            description: e.promoter.description,
+            api_event_id: e.id,
             url: e.url,
+            img: formatImageObj(e.images[0]),
+            date_and_time: formatDateAndTimeObj(e.dates),
+            tags: [e.classifications[0].segment.name, e.classifications[0].genre.name],
+            info: e.info,
+            location: e.place || {location: "No Location Provided"},
+            description: e.promoter?.description || "",
         }
     })
-    console.log({trimmedEvents})
+    return trimmedEvents
+  })
+  .catch((err) => {
+    console.log(err)
   })
 };
