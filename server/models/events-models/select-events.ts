@@ -4,8 +4,10 @@ import { getTicketmasterEvents } from "../../ticketmaster-requests/get-events-re
 import { formatArray } from "../../../utils"
 import format from "pg-format"
 
-export const selectEvents = () => {
-    return getTicketmasterEvents().then((response) => {
+export const selectEvents = (city = "") => {
+    
+    return getTicketmasterEvents(city).then((response) => {
+        
         const formattedEvents = response.map(({
             api_event_id,
             name,
@@ -19,7 +21,7 @@ export const selectEvents = () => {
           }: EventInterface) => [
             api_event_id,
             name,
-            location || {location: "No Location Provided"},
+            location,
             date_and_time,
             formatArray(tags),
             img,
@@ -35,10 +37,12 @@ export const selectEvents = () => {
         )
         return db.query(insertEventsQuery)
         .then(() => {
-            return db.query("SELECT * FROM events")
+            const cityQuery = city ? ` WHERE location->>'city' ILIKE '%${city}%'` : ""
+            return db.query("SELECT * FROM events" + cityQuery)
             .then(({rows}: {rows: EventInterface[]}) => {
                 return rows
             })
         })
     })
 }
+

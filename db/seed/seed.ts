@@ -29,7 +29,7 @@ export const seed = (
         return db.query(`
       CREATE TABLE events (
         event_id SERIAL PRIMARY KEY,
-        api_event_id VARCHAR(25) UNIQUE,
+        api_event_id VARCHAR(50) UNIQUE,
         name VARCHAR(200) NOT NULL,
         location JSONB NOT NULL,
         date_and_time JSONB,

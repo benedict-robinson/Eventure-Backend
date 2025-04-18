@@ -8,7 +8,8 @@ const optsEvents = {
   url: `https://app.ticketmaster.com/discovery/v2/events/`,
   params: {
     apikey: apiKey,
-    size: 5
+    size: 50,
+    city: "manchester"
   }
 };
 // Default size is 20 unless specified otherwise
@@ -34,22 +35,23 @@ function formatImageObj(obj) {
 
 axios(optsEvents)
   .then(({ data: { _embedded: { events } } })=> {
-    const trimmedEvents = events.map(e => {
+    console.log(events[13])
+    const trimmedEvents = events.map((e) => {
         return {
             name: e.name,
             id: e.id,
-            url: e.url,
-            image: formatImageObj(e.images[0]),
+            url: e?.url,
+            image: formatImageObj(e?.images[0]) || {},
             dates: formatDateAndTimeObj(e.dates),
-            tags: [e.classifications[0].segment.name, e.classifications[0].genre.name],
-            info: e.info,
-            location: e.place || {location: "No Location Provided"},
-            description: e.promoter.description,
+            tags: e.classifications ? [e?.classifications[0].segment.name, e?.classifications[0].genre.name]: [],
+            info: e.info || "",
+            location: e.place || optsEvents.params.city || {location: "No Location Provided"},
+            description: e.description || e?.promoter?.description || "",
         }
     })
     //console.log(JSON.stringify(trimmedEvents, null, 2))
-    console.log(trimmedEvents[0])
-    // console.log(events[0])
+    console.log(trimmedEvents)
+    //console.log(events[0])
     // console.log(events[4])
   })
   .catch(error => {

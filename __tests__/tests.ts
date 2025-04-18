@@ -125,5 +125,15 @@ describe("Events", () => {
                 expect(events.length - ticketMasterEvents.length).toBe(2)
             })
         })
+        test("GET Events ? city - retrieves results filtered by city", () => {
+          return request(app)
+          .get("/api/events?city=manchester")
+          .expect(200)
+          .then(({body: { events }}) => {
+            events.forEach((e: EventInterface) => {
+              expect(e.location?.city).toBe("manchester")
+            })
+          })
+        })
     })
 })
