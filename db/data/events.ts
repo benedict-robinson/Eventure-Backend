@@ -65,11 +65,11 @@ const events: EventInterface[] = [
   },
   {
     name: "Lo-Fi Beats Night",
-    location: {
-      city: "Brooklyn",
-      country: "USA",
-      country_code: "US"
-    },
+    // location: {
+    //   city: "Brooklyn",
+    //   country: "USA",
+    //   country_code: "US"
+    // },
     date_and_time: {
       start_date: "2025-05-01",
       start_time: 20,

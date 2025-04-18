@@ -31,7 +31,7 @@ export const seed = (
         event_id SERIAL PRIMARY KEY,
         api_event_id VARCHAR(25),
         name VARCHAR(200) NOT NULL,
-        location JSONB,
+        location JSONB NOT NULL,
         date_and_time JSONB,
         tags TEXT[],
         img JSONB,
@@ -90,7 +90,7 @@ export const seed = (
             }) => [
               api_event_id || null,
               name,
-              location,
+              location || {location: "Not Location Provided"},
               date_and_time,
               formatArray(tags),
               img,

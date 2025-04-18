@@ -8,7 +8,7 @@ const optsEvents = {
   url: `https://app.ticketmaster.com/discovery/v2/events/`,
   params: {
     apikey: apiKey,
-    size: 4
+    size: 5
   }
 };
 // Default size is 20 unless specified otherwise
@@ -25,11 +25,14 @@ axios(optsEvents)
             dates: e.dates,
             tags: [e.classifications[0].segment.name, e.classifications[0].genre.name],
             info: e.info,
-            location: e.place
+            location: e.place,
+            description: e.promoter.description,
         }
     })
-    console.log(JSON.stringify(trimmedEvents, null, 2))
-    //console.log(trimmedEvents)
+    //console.log(JSON.stringify(trimmedEvents, null, 2))
+    // console.log(trimmedEvents)
+    console.log(events[0])
+    // console.log(events[4])
   })
   .catch(error => {
     console.error('Error:', error.message);
