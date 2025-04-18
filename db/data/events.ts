@@ -6,7 +6,7 @@ export interface EventInterface {
   location?: LocationInterface;
   date_and_time?: DateTimeInterface;
   tags: string[];
-  img?: ImageInterface[];
+  img?: ImageInterface;
   info?: string;
   description: string;
   url?: string;
@@ -53,14 +53,12 @@ const events: EventInterface[] = [
       timezone: "America/New_York",
     },
     tags: ["Sports", "Baseball"],
-    img: [
-      {
+    img: {
         url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
         ratio: "3_2",
         width: 640,
         height: 427,
       },
-    ],
     info: "Please adhere to published limits. Persons who exceed the ticket limit may have any or all of their orders and tickets cancelled without notice by Ticketmaster in its discretion...",
     description: "New York Yankees vs. Baltimore Orioles at Yankee Stadium",
     url: "https://www.ticketmaster.com/new-york-yankees-vs-baltimore-orioles-bronx-new-york-06-21-2025/event/1D00611CAB274E0B",
@@ -80,14 +78,12 @@ const events: EventInterface[] = [
       timezone: "EST"
     },
     tags: ["music", "lofi", "chill"],
-    img: [
-      {
+    img: {
         url: "https://example.com/lofi.jpg",
         ratio: "16_9",
         width: 1280,
         height: 720
-      }
-    ],
+      },
     info: "A cozy night of lo-fi beats and mellow vibes.",
     description: "Join us for a laid-back evening featuring lo-fi artists and ambient lighting.",
     url: "https://ticket.link/event/lofi"
@@ -107,14 +103,12 @@ const events: EventInterface[] = [
       timezone: "PST"
     },
     tags: ["tech", "javascript", "conference"],
-    img: [
-      {
+    img: {
         url: "https://example.com/jsconf.png",
         ratio: "3_2",
         width: 1024,
         height: 683
-      }
-    ],
+      },
     info: "The biggest JS conference of the year.",
     description: "Speakers from top companies, hands-on workshops, and cool swag.",
     url: "https://ticket.link/event/jsconf"
@@ -135,14 +129,12 @@ const events: EventInterface[] = [
       timezone: "America/New_York",
     },
     tags: ["Sports", "Baseball"],
-    img: [
-      {
+    img: {
         url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
         ratio: "3_2",
         width: 640,
         height: 427,
       },
-    ],
     info: "Please adhere to published limits. Persons who exceed the ticket limit may have any or all of their orders and tickets cancelled without notice by Ticketmaster in its discretion...",
     description: "New York Yankees vs. Houston Astros at Yankee Stadium",
     url: "https://www.ticketmaster.com/new-york-yankees-vs-houston-astros-bronx-new-york-08-08-2025/event/1D00611CAB494E56",
@@ -163,14 +155,12 @@ const events: EventInterface[] = [
       timezone: "America/New_York",
     },
     tags: ["Sports", "Baseball"],
-    img: [
-      {
+    img: {
         url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
         ratio: "3_2",
         width: 640,
         height: 427,
       },
-    ],
     info: "Please adhere to published limits. Persons who exceed the ticket limit may have any or all of their orders and tickets cancelled without notice by Ticketmaster in its discretion...",
     description: "New York Yankees vs. Toronto Blue Jays at Yankee Stadium",
     url: "https://www.ticketmaster.com/new-york-yankees-vs-toronto-blue-bronx-new-york-04-26-2025/event/1D00611CAAF94D41",
@@ -191,14 +181,12 @@ const events: EventInterface[] = [
       timezone: "America/New_York",
     },
     tags: ["Sports", "Baseball"],
-    img: [
-      {
+    img: {
         url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
         ratio: "3_2",
         width: 640,
         height: 427,
       },
-    ],
     info: "Please adhere to published limits. Persons who exceed the ticket limit may have any or all of their orders and tickets cancelled without notice by Ticketmaster in its discretion...",
     description: "New York Yankees vs. Athletics at Yankee Stadium",
     url: "https://www.ticketmaster.com/new-york-yankees-vs-athletics-bronx-new-york-06-28-2025/event/1D00611CAB2C4E27",
