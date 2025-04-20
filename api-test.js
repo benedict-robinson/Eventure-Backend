@@ -9,9 +9,18 @@ const optsEvents = {
   params: {
     apikey: apiKey,
     size: 50,
-    city: "manchester"
+    // city: "manchester",
+    classificationName: "film"
   }
 };
+const optsGenres = {
+  method: "GET",
+  url: "https://app.ticketmaster.com/discovery/v2/classifications",
+  params: {
+    apikey: apiKey,
+    size: 50,
+  }
+}
 // Default size is 20 unless specified otherwise
 // url ALWAYS needs apikey
 
@@ -35,7 +44,7 @@ function formatImageObj(obj) {
 
 axios(optsEvents)
   .then(({ data: { _embedded: { events } } })=> {
-    console.log(events[13])
+
     const trimmedEvents = events.map((e) => {
         return {
             name: e.name,
@@ -50,10 +59,15 @@ axios(optsEvents)
         }
     })
     //console.log(JSON.stringify(trimmedEvents, null, 2))
+    // console.log(events[0])
     console.log(trimmedEvents)
-    //console.log(events[0])
     // console.log(events[4])
   })
   .catch(error => {
     console.error('Error:', error.message);
   });
+
+  axios(optsGenres)
+  .then(({ data: { _embedded: { classifications } } }) => {
+    // console.log(classifications)
+  })

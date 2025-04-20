@@ -145,6 +145,18 @@ describe("Events", () => {
             })
           })
         })
+        test("GET Events ? category - retrieves results filtered by genre/category", () => {
+          return request(app)
+          .get("/api/events?classificationName=film")
+          .expect(200)
+          .then(({body: {events}}) => {
+            events.forEach((e: EventInterface) => {
+              // console.log(events.slice(0,5))
+              const formattedTags = e.tags.map(tag => tag.toLowerCase())
+              expect(formattedTags).toContain("film")
+            })
+          })
+        })
         test("GET Events ? - queries work simultaneously", () => {
           return request(app)
           .get("/api/events?city=los+angeles&countryCode=US")
