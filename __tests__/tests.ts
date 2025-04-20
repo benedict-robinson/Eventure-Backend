@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-xdescribe("Test Seed Function", () => {
+describe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -145,14 +145,27 @@ describe("Events", () => {
             })
           })
         })
+        test("GET Events ? category - retrieves results filtered by genre/category", () => {
+          return request(app)
+          .get("/api/events?classificationName=film")
+          .expect(200)
+          .then(({body: {events}}) => {
+            events.forEach((e: EventInterface) => {
+              const formattedTags = e.tags.map(tag => tag.toLowerCase())
+              expect(formattedTags).toContain("film")
+            })
+          })
+        })
         test("GET Events ? - queries work simultaneously", () => {
           return request(app)
-          .get("/api/events?city=los+angeles&countryCode=US")
+          .get("/api/events?city=los+angeles&countryCode=US&classificationName=music")
           .expect(200)
           .then(({body: {events}}) => {
             events.forEach((e: EventInterface) => {
               expect(e.location?.city).toBe("los angeles")
               expect(e.location?.country_code).toBe("US")
+              const formattedTags = e.tags.map(tag => tag.toLowerCase())
+              expect(formattedTags).toContain("music")
             })
           })
         })
