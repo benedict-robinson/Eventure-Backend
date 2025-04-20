@@ -10,11 +10,12 @@ interface GetEventsRequest {
   params: {
     apikey: any;
     size: number;
-    city?: string
+    city?: string,
+    countryCode?: string
   };
 }
 
-export const getTicketmasterEvents = (city: string) => {
+export const getTicketmasterEvents = (city: string, countryCode: string) => {
   const getEventsObj: GetEventsRequest = {
     method: "GET",
     url: `https://app.ticketmaster.com/discovery/v2/events/`,
@@ -25,6 +26,9 @@ export const getTicketmasterEvents = (city: string) => {
   };
   if (city) {
     getEventsObj.params.city = city
+  }
+  if (countryCode) {
+    getEventsObj.params.countryCode = countryCode
   }
   return axios(getEventsObj)
     .then(
@@ -45,7 +49,7 @@ export const getTicketmasterEvents = (city: string) => {
               e.classifications[0].genre.name,
             ] : [],
             info: e.info || "",
-            location: e.place || {city: city }|| { location: "No Location Provided" },
+            location: e.place || {city: city, country_code: countryCode }|| { location: "No Location Provided" },
             description: e.description || e?.promoter?.description || "",
           };
         });

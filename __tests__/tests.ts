@@ -127,11 +127,32 @@ describe("Events", () => {
         })
         test("GET Events ? city - retrieves results filtered by city", () => {
           return request(app)
-          .get("/api/events?city=manchester")
+          .get("/api/events?city=bristol")
           .expect(200)
           .then(({body: { events }}) => {
             events.forEach((e: EventInterface) => {
-              expect(e.location?.city).toBe("manchester")
+              expect(e.location?.city).toBe("bristol")
+            })
+          })
+        })
+        test("GET Events ? country - retrieves results filtered by country", () => {
+          return request(app)
+          .get("/api/events?countryCode=GB")
+          .expect(200)
+          .then(({ body: { events }}) => {
+            events.forEach((e: EventInterface) => {
+              expect(e.location?.country_code).toBe("GB")
+            })
+          })
+        })
+        test("GET Events ? - queries work simultaneously", () => {
+          return request(app)
+          .get("/api/events?city=los+angeles&countryCode=US")
+          .expect(200)
+          .then(({body: {events}}) => {
+            events.forEach((e: EventInterface) => {
+              expect(e.location?.city).toBe("los angeles")
+              expect(e.location?.country_code).toBe("US")
             })
           })
         })
