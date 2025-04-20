@@ -4,9 +4,9 @@ import { getTicketmasterEvents } from "../../ticketmaster-requests/get-events-re
 import { formatArray } from "../../../utils"
 import format from "pg-format"
 
-export const selectEvents = (city = "") => {
+export const selectEvents = (city = "", countryCode = "") => {
     
-    return getTicketmasterEvents(city).then((response) => {
+    return getTicketmasterEvents(city, countryCode).then((response) => {
         
         const formattedEvents = response.map(({
             api_event_id,
@@ -38,7 +38,8 @@ export const selectEvents = (city = "") => {
         return db.query(insertEventsQuery)
         .then(() => {
             const cityQuery = city ? ` WHERE location->>'city' ILIKE '%${city}%'` : ""
-            return db.query("SELECT * FROM events" + cityQuery)
+            const countryQuery = countryCode ? (cityQuery ? " AND " : " WHERE ") + `location->>'country_code' = '${countryCode}'` : ""
+            return db.query("SELECT * FROM events" + cityQuery + countryQuery)
             .then(({rows}: {rows: EventInterface[]}) => {
                 return rows
             })
