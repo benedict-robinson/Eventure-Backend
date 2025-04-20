@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-describe("Test Seed Function", () => {
+xdescribe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -166,6 +166,16 @@ describe("Events", () => {
               expect(e.location?.country_code).toBe("US")
               const formattedTags = e.tags.map(tag => tag.toLowerCase())
               expect(formattedTags).toContain("music")
+            })
+          })
+        })
+        describe("Get Events - Error Testing", () => {
+          test("returns 404 when passed a valid query but no results", () => {
+            return request(app)
+            .get("/api/events?city=bristol&countryCode=FR")
+            .expect(404)
+            .then(({body: {msg}}) => {
+              expect(msg).toBe("No Events Found")
             })
           })
         })

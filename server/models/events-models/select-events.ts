@@ -13,6 +13,9 @@ export const selectEvents = (
 
   return getTicketmasterEvents(city, countryCode, classificationName).then(
     (response) => {
+    if (!response) {
+       return Promise.reject({status: 404, msg: "No Events Found"})
+    }
       const formattedEvents = response.map(
         ({
           api_event_id,

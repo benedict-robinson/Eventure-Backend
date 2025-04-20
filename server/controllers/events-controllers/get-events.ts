@@ -9,5 +9,8 @@ export const getEvents = (req: Request, res: Response, next: NextFunction) => {
 
   selectEvents(city, countryCode, classificationName).then((events: EventInterface[]) => {
     res.status(200).send({ events });
-  });
+  })
+  .catch((err) => {
+    next(err)
+  })
 };
