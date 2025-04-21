@@ -51,7 +51,7 @@ axios(optsEvents)
             id: e.id,
             url: e?.url,
             image: formatImageObj(e?.images[0]) || {},
-            dates: formatDateAndTimeObj(e.dates),
+            date_and_time: formatDateAndTimeObj(e.dates),
             tags: e.classifications ? [e?.classifications[0].segment.name, e?.classifications[0].genre.name]: [],
             info: e.info || "",
             location: e.place || optsEvents.params.city || {location: "No Location Provided"},

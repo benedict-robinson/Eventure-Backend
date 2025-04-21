@@ -20,3 +20,7 @@ export const formatImageObj = (obj: any) => {
       height: obj.height 
     }
   }
+
+export const sortByDate = (direction: string) => {
+  
+}
