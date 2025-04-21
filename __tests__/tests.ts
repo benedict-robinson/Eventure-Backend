@@ -169,7 +169,7 @@ describe("Events", () => {
             })
           })
         })
-        describe.only("Get Events - Error Testing", () => {
+        describe("Get Events - Error Testing", () => {
           test("returns 404 when passed a valid query but no results", () => {
             return request(app)
             .get("/api/events?city=bristol&countryCode=FR")
