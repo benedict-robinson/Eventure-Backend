@@ -162,7 +162,7 @@ describe("Events", () => {
           .get("/api/events?sort=date-desc")
           .expect(200)
           .then(({body: {events}}) => {
-            const startDates = events.map(e => {
+            const startDates = events.map((e: any) => {
               return new Date(e.date_and_time.start_date).getTime()
             })
             const sortedDates = [...startDates].sort((a: number, b: number) => b - a)
@@ -174,7 +174,7 @@ describe("Events", () => {
           .get("/api/events?sort=date-asc")
           .expect(200)
           .then(({body: {events}}) => {
-            const startDates = events.map(e => {
+            const startDates = events.map((e: any) => {
               return new Date(e.date_and_time.start_date).getTime()
             })
             const sortedDates = [...startDates].sort((a: number, b: number) => a - b)
