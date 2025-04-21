@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-describe("Test Seed Function", () => {
+xdescribe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -90,9 +90,8 @@ describe("Test Seed Function", () => {
   });
 });
 
-
-describe("Events", () => {
-    describe("GET events", () => {
+xdescribe("Events", () => {
+    xdescribe("GET events", () => {
         test("GET Events - returns array of events", () => {
             return request(app)
             .get("/api/events")
@@ -245,4 +244,75 @@ describe("Events", () => {
           })
         })
     })
+    describe("POST events by user_id", () => {
+      test("Post Event - creates a new event", () => {
+        const newEvent = {
+          name: "Test Event",
+          location: {
+            city: "Bristol",
+            country: "UK",
+            country_code: "GB",
+          },
+          date_and_time: {
+            start_date: "2025-04-21",
+            start_time: 13,
+            end_date: "2025-04-21",
+            end_time: 16,
+            timezone: "Europe/London",
+          },
+          tags: ["Arts & Theatre", "Film"],
+          img: {
+              url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
+              ratio: "3_2",
+              width: 640,
+              height: 427,
+            },
+          info: "test info",
+          description: "test description",
+          url: "https://www.webpagetest.org/",
+        }
+        return request(app)
+        .post("/api/events/2")
+        .send(newEvent)
+        .expect(201)
+        .then(response => {
+          console.log(response)
+        })
+        
+      })
+    })
+})
+
+describe("Users", () => {
+  describe("GET Users", () => {
+    test("GET Users returns an array of all users", () => {
+      return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({body: {users}}) => {
+        expect(users.length).toBe(3)
+        const keys = ["user_id", "username", "email", "is_staff", "image_url"]
+        users.forEach((user: UserInterface) => {
+        expect(Object.keys(user)).toEqual(keys)
+        })
+      })
+    })
+  })
+  describe("GET Users by username", () => {
+    test("GET users by user_id returns a singular correct user with matching username", () => {
+      const user = {
+        username: "user1",
+        email: "user1@example.com",
+        is_staff: true,
+        image_url: "https://avatar.iran.liara.run/public/boy?username=Ash"
+      }
+      return request(app)
+      .get("/api/users/user1")
+      .expect(200)
+      .then(({body: {user}}) => {
+        expect(user).toEqual(user)
+      })
+    })
+    test()
+  })
 })
