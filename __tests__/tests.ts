@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-xdescribe("Test Seed Function", () => {
+describe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -318,6 +318,49 @@ describe("Events", () => {
             const testInsertedEvent = {...newEvent, api_event_id: null, event_id: 7}
             expect(insertedEvent).toHaveLength(1)
             expect(insertedEvent[0]).toEqual(testInsertedEvent)
+          })
+        })
+      })
+      describe("POST Event by username - error handling", () => {
+        test("returns 401 unauthorized when not staff", () => {
+          const newEvent = {
+            name: "test",
+            tags: [],
+            description: "test description"
+          }
+          return request(app)
+          .post("/api/events/user2")
+          .send(newEvent)
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
+          })
+        })
+        test("returns 404 User Not Found when attempting to post with a non-existent username", () => {
+          const newEvent = {
+            name: "test",
+            tags: [],
+            description: "test description"
+          }
+          return request(app)
+          .post("/api/events/test-user")
+          .send(newEvent)
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("User Not Found")
+          })
+        })
+        test("returns 400 Bad Request when attempting to post event with missing required keys", () => {
+          const newEvent = {
+            info: "test info",
+            url: "https://www.webpagetest.org/"
+          }
+          return request(app)
+          .post("/api/events/user1")
+          .send(newEvent)
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request - More Information Required")
           })
         })
       })

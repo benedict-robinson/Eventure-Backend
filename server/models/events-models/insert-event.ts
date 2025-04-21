@@ -9,6 +9,9 @@ const db = require("../../../db/connection.js");
 export const insertEvent = (username: string, newEvent: EventInterface) => {
   return selectUserByUsername(username).then(
     ([response]: [response: UserInterface]) => {
+    if (!response) {
+        return Promise.reject({status: 404, msg: "User Not Found"})
+    }
       const {user_id, is_staff} = response
       const {
         api_event_id,
