@@ -156,9 +156,33 @@ describe("Events", () => {
             })
           })
         })
+        test("GET Events ? sort by date desc", () => {
+          return request(app)
+          .get("/api/events?sort=date-desc")
+          .expect(200)
+          .then(({body: {events}}) => {
+            const startDates = events.map(e => {
+              return new Date(e.date_and_time.start_date).getTime()
+            })
+            const sortedDates = [...startDates].sort((a: number, b: number) => b - a)
+            expect(startDates).toEqual(sortedDates)
+          })
+        })
+        test("GET Events ? sort by date asc", () => {
+          return request(app)
+          .get("/api/events?sort=date-asc")
+          .expect(200)
+          .then(({body: {events}}) => {
+            const startDates = events.map(e => {
+              return new Date(e.date_and_time.start_date).getTime()
+            })
+            const sortedDates = [...startDates].sort((a: number, b: number) => a - b)
+            expect(startDates).toEqual(sortedDates)
+          })
+        })
         test("GET Events ? - queries work simultaneously", () => {
           return request(app)
-          .get("/api/events?city=los+angeles&countryCode=US&classificationName=music")
+          .get("/api/events?city=los+angeles&countryCode=US&classificationName=music&sort=date-asc")
           .expect(200)
           .then(({body: {events}}) => {
             events.forEach((e: EventInterface) => {
