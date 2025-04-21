@@ -90,7 +90,6 @@ describe("Test Seed Function", () => {
   });
 });
 
-
 describe("Events", () => {
     describe("GET events", () => {
         test("GET Events - returns array of events", () => {
@@ -245,4 +244,166 @@ describe("Events", () => {
           })
         })
     })
+    describe("POST events by username", () => {
+      test("Post Event - returns user_my_events entry", () => {
+        const newEvent = {
+          name: "Test Event",
+          location: {
+            city: "Bristol",
+            country: "UK",
+            country_code: "GB",
+          },
+          date_and_time: {
+            start_date: "2025-04-21",
+            start_time: 13,
+            end_date: "2025-04-21",
+            end_time: 16,
+            timezone: "Europe/London",
+          },
+          tags: ["Arts & Theatre", "Film"],
+          img: {
+              url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
+              ratio: "3_2",
+              width: 640,
+              height: 427,
+            },
+          info: "test info",
+          description: "test description",
+          url: "https://www.webpagetest.org/",
+        }
+        return request(app)
+        .post("/api/events/user1")
+        .send(newEvent)
+        .expect(201)
+        .then(({body}) => {
+          const { user_id, event_id } = body
+          expect(user_id).toBe(1)
+          expect(event_id).toBe(7)
+        })
+      })
+      test("POST event - adds event to the database", () => {
+        const newEvent = {
+          name: "Test Event",
+          location: {
+            city: "Bristol",
+            country: "UK",
+            country_code: "GB",
+          },
+          date_and_time: {
+            start_date: "2025-04-21",
+            start_time: 13,
+            end_date: "2025-04-21",
+            end_time: 16,
+            timezone: "Europe/London",
+          },
+          tags: ["Arts & Theatre", "Film"],
+          img: {
+              url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
+              ratio: "3_2",
+              width: 640,
+              height: 427,
+            },
+          info: "test info",
+          description: "test description",
+          url: "https://www.webpagetest.org/",
+        }
+        return request(app)
+        .post("/api/events/user1")
+        .send(newEvent)
+        .expect(201)
+        .then(response => {
+          return db.query("SELECT * FROM events")
+          .then(({rows}: {rows: EventInterface[]}) => {
+            const insertedEvent = rows.filter(e => e.name === "Test Event")
+            const testInsertedEvent = {...newEvent, api_event_id: null, event_id: 7}
+            expect(insertedEvent).toHaveLength(1)
+            expect(insertedEvent[0]).toEqual(testInsertedEvent)
+          })
+        })
+      })
+      describe("POST Event by username - error handling", () => {
+        test("returns 401 unauthorized when not staff", () => {
+          const newEvent = {
+            name: "test",
+            tags: [],
+            description: "test description"
+          }
+          return request(app)
+          .post("/api/events/user2")
+          .send(newEvent)
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
+          })
+        })
+        test("returns 404 User Not Found when attempting to post with a non-existent username", () => {
+          const newEvent = {
+            name: "test",
+            tags: [],
+            description: "test description"
+          }
+          return request(app)
+          .post("/api/events/test-user")
+          .send(newEvent)
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("User Not Found")
+          })
+        })
+        test("returns 400 Bad Request when attempting to post event with missing required keys", () => {
+          const newEvent = {
+            info: "test info",
+            url: "https://www.webpagetest.org/"
+          }
+          return request(app)
+          .post("/api/events/user1")
+          .send(newEvent)
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request - More Information Required")
+          })
+        })
+      })
+    })
+})
+
+describe("Users", () => {
+  describe("GET Users", () => {
+    test("GET Users returns an array of all users", () => {
+      return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({body: {users}}) => {
+        expect(users.length).toBe(3)
+        const keys = ["user_id", "username", "email", "is_staff", "image_url"]
+        users.forEach((user: UserInterface) => {
+        expect(Object.keys(user)).toEqual(keys)
+        })
+      })
+    })
+  })
+  describe("GET Users by username", () => {
+    test("GET users by user_id returns a singular correct user with matching username", () => {
+      const user = {
+        username: "user1",
+        email: "user1@example.com",
+        is_staff: true,
+        image_url: "https://avatar.iran.liara.run/public/boy?username=Ash"
+      }
+      return request(app)
+      .get("/api/users/user1")
+      .expect(200)
+      .then(({body: {user}}) => {
+        expect(user).toEqual(user)
+      })
+    })
+    test("404 Not Found - returns 404 when passed a non-existent user", () => {
+      return request(app)
+      .get("/api/users/test-user")
+      .expect(404)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("User Not Found")
+      })
+    })
+  })
 })
