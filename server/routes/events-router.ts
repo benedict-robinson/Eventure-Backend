@@ -5,6 +5,6 @@ import { postEvent } from "../controllers/events-controllers/post-events";
 const eventsRouter: Router = express.Router();
 
 eventsRouter.get("/", getEvents)
-eventsRouter.post("/:user_id", postEvent)
+eventsRouter.post("/:username", postEvent)
 
 export { eventsRouter };

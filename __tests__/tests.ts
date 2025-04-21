@@ -90,8 +90,8 @@ xdescribe("Test Seed Function", () => {
   });
 });
 
-xdescribe("Events", () => {
-    xdescribe("GET events", () => {
+describe("Events", () => {
+    describe("GET events", () => {
         test("GET Events - returns array of events", () => {
             return request(app)
             .get("/api/events")
@@ -244,8 +244,8 @@ xdescribe("Events", () => {
           })
         })
     })
-    describe("POST events by user_id", () => {
-      test("Post Event - creates a new event", () => {
+    describe("POST events by username", () => {
+      test("Post Event - returns user_my_events entry", () => {
         const newEvent = {
           name: "Test Event",
           location: {
@@ -272,13 +272,54 @@ xdescribe("Events", () => {
           url: "https://www.webpagetest.org/",
         }
         return request(app)
-        .post("/api/events/2")
+        .post("/api/events/user1")
+        .send(newEvent)
+        .expect(201)
+        .then(({body}) => {
+          const { user_id, event_id } = body
+          expect(user_id).toBe(1)
+          expect(event_id).toBe(7)
+        })
+      })
+      test("POST event - adds event to the database", () => {
+        const newEvent = {
+          name: "Test Event",
+          location: {
+            city: "Bristol",
+            country: "UK",
+            country_code: "GB",
+          },
+          date_and_time: {
+            start_date: "2025-04-21",
+            start_time: 13,
+            end_date: "2025-04-21",
+            end_time: 16,
+            timezone: "Europe/London",
+          },
+          tags: ["Arts & Theatre", "Film"],
+          img: {
+              url: "https://s1.ticketm.net/dam/a/7e0/479ac7e7-15fb-44ba-8708-fc1bf2d037e0_RETINA_PORTRAIT_3_2.jpg",
+              ratio: "3_2",
+              width: 640,
+              height: 427,
+            },
+          info: "test info",
+          description: "test description",
+          url: "https://www.webpagetest.org/",
+        }
+        return request(app)
+        .post("/api/events/user1")
         .send(newEvent)
         .expect(201)
         .then(response => {
-          console.log(response)
+          return db.query("SELECT * FROM events")
+          .then(({rows}: {rows: EventInterface[]}) => {
+            const insertedEvent = rows.filter(e => e.name === "Test Event")
+            const testInsertedEvent = {...newEvent, api_event_id: null, event_id: 7}
+            expect(insertedEvent).toHaveLength(1)
+            expect(insertedEvent[0]).toEqual(testInsertedEvent)
+          })
         })
-        
       })
     })
 })
@@ -313,7 +354,7 @@ describe("Users", () => {
         expect(user).toEqual(user)
       })
     })
-    test.only("404 Not Found - returns 404 when passed a non-existent user", () => {
+    test("404 Not Found - returns 404 when passed a non-existent user", () => {
       return request(app)
       .get("/api/users/test-user")
       .expect(404)
