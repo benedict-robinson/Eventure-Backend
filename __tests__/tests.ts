@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-xdescribe("Test Seed Function", () => {
+describe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -90,6 +90,7 @@ xdescribe("Test Seed Function", () => {
   });
 });
 
+
 describe("Events", () => {
     describe("GET events", () => {
         test("GET Events - returns array of events", () => {
@@ -161,7 +162,7 @@ describe("Events", () => {
           .get("/api/events?sort=date-desc")
           .expect(200)
           .then(({body: {events}}) => {
-            const startDates = events.map(e => {
+            const startDates = events.map((e: any) => {
               return new Date(e.date_and_time.start_date).getTime()
             })
             const sortedDates = [...startDates].sort((a: number, b: number) => b - a)
@@ -173,7 +174,7 @@ describe("Events", () => {
           .get("/api/events?sort=date-asc")
           .expect(200)
           .then(({body: {events}}) => {
-            const startDates = events.map(e => {
+            const startDates = events.map((e: any) => {
               return new Date(e.date_and_time.start_date).getTime()
             })
             const sortedDates = [...startDates].sort((a: number, b: number) => a - b)
@@ -193,7 +194,7 @@ describe("Events", () => {
             })
           })
         })
-        describe.only("Get Events - Error Testing", () => {
+        describe("Get Events - Error Testing", () => {
           test("returns 404 when passed a valid query but no results", () => {
             return request(app)
             .get("/api/events?city=bristol&countryCode=FR")
