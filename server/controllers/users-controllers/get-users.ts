@@ -10,7 +10,13 @@ export const getUsers = (req: Request, res: Response, next: NextFunction) => {
 export const getUserByUsername = (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params
     selectUserByUsername(username).then((response: UserInterface[]) => {
+        if (response.length === 0) {
+            return Promise.reject({status: 404, msg: "User Not Found"})
+        }
         res.status(200).send({user: response[0]})
     })
+    .catch((err: {status: number, msg: string}) => {
+        next(err)
+      })
 }
 

@@ -11,7 +11,6 @@ export const selectUsers = () => {
 };
 
 export const selectUserByUsername = (username: string) => {
-    console.log(username)
     return db.query("SELECT * FROM users WHERE username = $1", [username])
     .then(({rows}: {rows: UserInterface[]}) => {
         return rows

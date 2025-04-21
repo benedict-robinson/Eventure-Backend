@@ -313,6 +313,13 @@ describe("Users", () => {
         expect(user).toEqual(user)
       })
     })
-    test()
+    test.only("404 Not Found - returns 404 when passed a non-existent user", () => {
+      return request(app)
+      .get("/api/users/test-user")
+      .expect(404)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("User Not Found")
+      })
+    })
   })
 })
