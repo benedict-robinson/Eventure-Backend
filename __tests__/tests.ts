@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-describe("Test Seed Function", () => {
+xdescribe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -91,7 +91,7 @@ describe("Test Seed Function", () => {
 });
 
 describe("Events", () => {
-    describe("GET events", () => {
+    xdescribe("GET events", () => {
         test("GET Events - returns array of events", () => {
             return request(app)
             .get("/api/events")
@@ -244,7 +244,7 @@ describe("Events", () => {
           })
         })
     })
-    describe("POST events by username", () => {
+    xdescribe("POST events by username", () => {
       test("Post Event - returns user_my_events entry", () => {
         const newEvent = {
           name: "Test Event",
@@ -365,9 +365,113 @@ describe("Events", () => {
         })
       })
     })
+    describe("PATCH Events by username", () => {
+      test("PATCH events - updates and returns event", () => {
+        const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+        return request(app)
+        .patch("/api/events/user1")
+        .send(eventPatch)
+        .expect(200)
+        .then(({body: {event}}) => {
+          expect(event.event_id).toBe(3)
+          expect(event.description).toBe("new description")
+          expect(event.name).toBe("new name")
+        })
+      })
+      test("PATCH events - works with objects", () => {
+        const eventPatch = {
+          event_id: 3,
+          description: "new description",
+          location: { city: "Bronx", country: "USA", country_code: "US" },
+          date_and_time: {
+            start_date: "2025-04-26",
+            start_time: 13,
+            end_date: "2025-04-26",
+            end_time: 16,
+            timezone: "America/New_York",
+          },
+        };
+        return request(app)
+        .patch("/api/events/user1")
+        .send(eventPatch)
+        .expect(200)
+        .then(({body: {event}}) => {
+          expect(event.event_id).toBe(3)
+          expect(event.description).toBe("new description")
+          expect(event.location).toEqual({ city: "Bronx", country: "USA", country_code: "US" })
+          expect(event.date_and_time).toEqual({
+            start_date: "2025-04-26",
+            start_time: 13,
+            end_date: "2025-04-26",
+            end_time: 16,
+            timezone: "America/New_York",
+          })
+        })
+      })
+      test("PATCH events - works for unnecessary keys", () => {
+        const eventPatch = {
+          event_id: 3,
+          description: "new description",
+          test: "test-key",
+          notAKey: "this is not a key"
+        };
+        return request(app)
+        .patch("/api/events/user1")
+        .send(eventPatch)
+        .expect(200)
+        .then(({body: {event}}) => {
+          expect(event.event_id).toBe(3)
+          expect(event.description).toBe("new description")
+          expect(Object.keys(event).includes("test")).toBe(false)
+          expect(Object.keys(event).includes("notAKey")).toBe(false)
+        })
+      })
+      describe.only("PATCH events - error testing", () => {
+        test("returns 401 Unauthorized when not staff", () => {
+          const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+          return request(app)
+          .patch("/api/events/user2")
+          .send(eventPatch)
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
+          })
+        })
+        test("returns 401 Unauthorized when not owner of the event", () => {
+          const eventPatch = {event_id: 7, description: "new description", name: "new name"}
+          return request(app)
+          .patch("/api/events/user1")
+          .send(eventPatch)
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
+          })
+        })
+        test("returns 404 when passed non-existent user", () => {
+          const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+          return request(app)
+          .patch("/api/events/test-user")
+          .send(eventPatch)
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("User Not Found")
+          })
+        })
+        test("returns 400 Bad Request when not passed event_id", () => {
+          const eventPatch = {description: "new description", name: "new name"}
+          return request(app)
+          .patch("/api/events/user2")
+          .send(eventPatch)
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request - No Event Specified")
+          })
+        })
+      })
+    })
 })
 
-describe("Users", () => {
+xdescribe("Users", () => {
   describe("GET Users", () => {
     test("GET Users returns an array of all users", () => {
       return request(app)

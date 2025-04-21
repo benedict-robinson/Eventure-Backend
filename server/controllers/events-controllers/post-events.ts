@@ -9,7 +9,6 @@ export const postEvent = (req: Request, res: Response, next: NextFunction) => {
         return Promise.reject({status: 400, msg: "Bad Request - More Information Required"})
     }
     insertEvent(username, newEvent).then(({rows}: {rows: {user_id: number, event_id: number}[]}) => {
-        console.log(rows)
         const [response] = rows
         res.status(201).send(response)
     })
