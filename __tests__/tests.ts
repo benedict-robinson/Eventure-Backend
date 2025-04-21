@@ -169,13 +169,29 @@ describe("Events", () => {
             })
           })
         })
-        describe("Get Events - Error Testing", () => {
+        describe.only("Get Events - Error Testing", () => {
           test("returns 404 when passed a valid query but no results", () => {
             return request(app)
             .get("/api/events?city=bristol&countryCode=FR")
             .expect(404)
             .then(({body: {msg}}) => {
               expect(msg).toBe("No Events Found")
+            })
+          })
+          test("returns 400 Bad Request when passed an invalid query - invalid cc", () => {
+            return request(app)
+            .get("/api/events?countryCode=france")
+            .expect(400)
+            .then(({body: {msg}}) => {
+              expect(msg).toBe("Bad Request")
+            })
+          })
+          test("returns 400 Bad Request when passed an invalid query - numbers in string", () => {
+            return request(app)
+            .get("/api/events?city=68")
+            .expect(400)
+            .then(({body: {msg}}) => {
+              expect(msg).toBe("Bad Request")
             })
           })
         })
