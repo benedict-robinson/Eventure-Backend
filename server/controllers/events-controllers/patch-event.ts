@@ -11,7 +11,7 @@ export const patchEvents = (req: Request, res: Response, next: NextFunction) => 
     updateEvent(username, newEvent).then((response: EventInterface) => {
         res.status(200).send({event: response})
     })
-    .catch((err) => {
+    .catch((err: any) => {
         next(err)
     })
 }
