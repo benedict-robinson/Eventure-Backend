@@ -12,7 +12,6 @@ export const deleteEvents = (req: Request, res: Response, next: NextFunction) =>
         res.status(202).send()
     })
     .catch((err: any) => {
-        console.log(err)
         next(err)
     })
 }
