@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-xdescribe("Test Seed Function", () => {
+describe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -91,7 +91,7 @@ xdescribe("Test Seed Function", () => {
 });
 
 describe("Events", () => {
-    xdescribe("GET events", () => {
+    describe("GET events", () => {
         test("GET Events - returns array of events", () => {
             return request(app)
             .get("/api/events")
@@ -244,7 +244,7 @@ describe("Events", () => {
           })
         })
     })
-    xdescribe("POST events by username", () => {
+    describe("POST events by username", () => {
       test("Post Event - returns user_my_events entry", () => {
         const newEvent = {
           name: "Test Event",
@@ -367,9 +367,9 @@ describe("Events", () => {
     })
     describe("PATCH Events by username", () => {
       test("PATCH events - updates and returns event", () => {
-        const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+        const eventPatch = {description: "new description", name: "new name"}
         return request(app)
-        .patch("/api/events/user1")
+        .patch("/api/events/user1/event/3")
         .send(eventPatch)
         .expect(200)
         .then(({body: {event}}) => {
@@ -380,7 +380,6 @@ describe("Events", () => {
       })
       test("PATCH events - works with objects", () => {
         const eventPatch = {
-          event_id: 3,
           description: "new description",
           location: { city: "Bronx", country: "USA", country_code: "US" },
           date_and_time: {
@@ -392,7 +391,7 @@ describe("Events", () => {
           },
         };
         return request(app)
-        .patch("/api/events/user1")
+        .patch("/api/events/user1/event/3")
         .send(eventPatch)
         .expect(200)
         .then(({body: {event}}) => {
@@ -410,13 +409,12 @@ describe("Events", () => {
       })
       test("PATCH events - works for unnecessary keys", () => {
         const eventPatch = {
-          event_id: 3,
           description: "new description",
           test: "test-key",
           notAKey: "this is not a key"
         };
         return request(app)
-        .patch("/api/events/user1")
+        .patch("/api/events/user1/event/3")
         .send(eventPatch)
         .expect(200)
         .then(({body: {event}}) => {
@@ -426,11 +424,11 @@ describe("Events", () => {
           expect(Object.keys(event).includes("notAKey")).toBe(false)
         })
       })
-      describe.only("PATCH events - error testing", () => {
+      describe("PATCH events - error testing", () => {
         test("returns 401 Unauthorized when not staff", () => {
-          const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+          const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/user2")
+          .patch("/api/events/user2/event/3")
           .send(eventPatch)
           .expect(401)
           .then(({body: {msg}}) => {
@@ -438,9 +436,9 @@ describe("Events", () => {
           })
         })
         test("returns 401 Unauthorized when not owner of the event", () => {
-          const eventPatch = {event_id: 7, description: "new description", name: "new name"}
+          const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/user1")
+          .patch("/api/events/user1/event/7")
           .send(eventPatch)
           .expect(401)
           .then(({body: {msg}}) => {
@@ -448,9 +446,9 @@ describe("Events", () => {
           })
         })
         test("returns 404 when passed non-existent user", () => {
-          const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+          const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/test-user")
+          .patch("/api/events/test-user/event/3")
           .send(eventPatch)
           .expect(404)
           .then(({body: {msg}}) => {
@@ -460,18 +458,79 @@ describe("Events", () => {
         test("returns 400 Bad Request when not passed event_id", () => {
           const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/user2")
+          .patch("/api/events/user2/event/")
+          .send(eventPatch)
+          .expect(500)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Internal server error!")
+          })
+        })
+        test("returns 400 Bad Request when passed an invalid event_id", () => {
+          const eventPatch = {description: "new description", name: "new name"}
+          return request(app)
+          .patch("/api/events/user2/event/test")
           .send(eventPatch)
           .expect(400)
           .then(({body: {msg}}) => {
-            expect(msg).toBe("Bad Request - No Event Specified")
+            expect(msg).toBe("Bad Request - Invalid Event")
+          })
+        })
+      })
+    })
+    describe("DELETE events by event_id", () => {
+      test("DELETE events - deletes event", () => {
+        return request(app)
+        .delete("/api/events/user1/event/2")
+        .expect(202)
+        .then(() => {
+          return db.query("SELECT * FROM events")
+          .then(({rows}: {rows: EventInterface[]}) => {
+            rows.forEach(e => {
+              expect(e.event_id)
+            })
+            const filteredRows = rows.filter(e => e.event_id === 2)
+            expect(filteredRows).toHaveLength(0)
+          })
+        })
+      })
+      describe("DELETE events - error testing", () => {
+        test("returns 404 when passed non-existent event_id", () => {
+          return request(app)
+          .delete("/api/events/user1/event/15")
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Event Not Found")
+          })
+        })
+        test("returns 400 Bad Request when passed an invalid event_id", () => {
+          return request(app)
+          .delete("/api/events/user1/event/test")
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request - Invalid Event")
+          })
+        })
+        test("returns 401 Unauthorized when not staff", () => {
+          return request(app)
+          .delete("/api/events/user2/event/2")
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
+          })
+        })
+        test("returns 401 Unauthorized when not the owner of the event", () => {
+          return request(app)
+          .delete("/api/events/user1/event/1")
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
           })
         })
       })
     })
 })
 
-xdescribe("Users", () => {
+describe("Users", () => {
   describe("GET Users", () => {
     test("GET Users returns an array of all users", () => {
       return request(app)
