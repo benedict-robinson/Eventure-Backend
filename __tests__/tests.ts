@@ -11,7 +11,7 @@ beforeEach(async () => {
 }, 15000);
 afterAll(async () => await db.end());
 
-xdescribe("Test Seed Function", () => {
+describe("Test Seed Function", () => {
   test("Should insert 6 events into events table", () => {
     return db
       .query("SELECT * FROM events")
@@ -91,7 +91,7 @@ xdescribe("Test Seed Function", () => {
 });
 
 describe("Events", () => {
-    xdescribe("GET events", () => {
+    describe("GET events", () => {
         test("GET Events - returns array of events", () => {
             return request(app)
             .get("/api/events")
@@ -244,7 +244,7 @@ describe("Events", () => {
           })
         })
     })
-    xdescribe("POST events by username", () => {
+    describe("POST events by username", () => {
       test("Post Event - returns user_my_events entry", () => {
         const newEvent = {
           name: "Test Event",
@@ -426,7 +426,7 @@ describe("Events", () => {
           expect(Object.keys(event).includes("notAKey")).toBe(false)
         })
       })
-      describe.only("PATCH events - error testing", () => {
+      describe("PATCH events - error testing", () => {
         test("returns 401 Unauthorized when not staff", () => {
           const eventPatch = {event_id: 3, description: "new description", name: "new name"}
           return request(app)
@@ -469,9 +469,23 @@ describe("Events", () => {
         })
       })
     })
+    describe.only("DELETE events by event_id", () => {
+      test("DELETE events - deletes event", () => {
+        return request(app)
+        .delete("/api/events/2")
+        .expect(202)
+        .then(() => {
+          return db.query("SELECT * FROM events")
+          .then(({rows}: {rows: EventInterface[]}) => {
+            const filteredRows = rows.filter(e => e.event_id === 2)
+            expect(filteredRows).toHaveLength(0)
+          })
+        })
+      })
+    })
 })
 
-xdescribe("Users", () => {
+describe("Users", () => {
   describe("GET Users", () => {
     test("GET Users returns an array of all users", () => {
       return request(app)
