@@ -4,6 +4,8 @@ import { UserInterface } from "../db/data/users.ts";
 import { seed } from "../db/seed/seed.ts";
 import request from "supertest";
 import app from "../server/app.ts";
+import { postUser } from "../server/controllers/users-controllers/post-user.ts";
+import { insertUser } from "../server/models/users-models/insert-user.ts";
 const db = require("../db/connection.js");
 
 beforeEach(async () => {
@@ -789,7 +791,7 @@ describe("Users", () => {
       })
     })
   })
-  describe.only("DELETE user by username", () => {
+  describe("DELETE user by username", () => {
     test("DELETE user by username deletes specified user", () => {
       return request(app)
       .delete("/api/users/user2")
@@ -815,3 +817,35 @@ describe("Users", () => {
     })
   })
 });
+
+describe("Join Tables", () => {
+  describe("favourites", () => {
+    describe("GET favourites by user_id", () => {
+      test("GET favourites by user_id returns an array of events favourited by user", () => {
+        return request(app)
+        .get("/api/favourites/1")
+        .expect(200)
+        .then(({body: {events}}) => {
+          const eventIds = events.map((e: EventInterface) => e.event_id)
+          expect(eventIds).toEqual([1, 3, 6])
+        })
+      })
+      test("GET favourites - returns 400 when given non-existent user", () => {
+        return request(app)
+        .get("/api/favourites/45")
+        .expect(400)
+        .then(({body: {msg}}) => {
+          expect(msg).toBe("Bad Request")
+        })
+      })
+      test("GET favourites - returns 400 when given invalid user_id", () => {
+        return request(app)
+        .get("/api/favourites/test")
+        .expect(400)
+        .then(({body: {msg}}) => {
+          expect(msg).toBe("Bad Request - Invalid User")
+        })
+      })
+    })
+  })
+})

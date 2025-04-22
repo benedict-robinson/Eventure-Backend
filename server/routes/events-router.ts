@@ -1,4 +1,4 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router } from "express";
 import { getEvents } from "../controllers/events-controllers/get-events";
 import { postEvent } from "../controllers/events-controllers/post-events";
 import { patchEvents } from "../controllers/events-controllers/patch-event";
