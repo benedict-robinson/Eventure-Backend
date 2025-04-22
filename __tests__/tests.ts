@@ -477,14 +477,17 @@ describe("Events", () => {
         })
       })
     })
-    xdescribe("DELETE events by event_id", () => {
+    describe("DELETE events by event_id", () => {
       test("DELETE events - deletes event", () => {
         return request(app)
-        .delete("/api/events/2")
+        .delete("/api/events/user1/event/2")
         .expect(202)
         .then(() => {
           return db.query("SELECT * FROM events")
           .then(({rows}: {rows: EventInterface[]}) => {
+            rows.forEach(e => {
+              expect(e.event_id)
+            })
             const filteredRows = rows.filter(e => e.event_id === 2)
             expect(filteredRows).toHaveLength(0)
           })
@@ -492,10 +495,36 @@ describe("Events", () => {
       })
       describe("DELETE events - error testing", () => {
         test("returns 404 when passed non-existent event_id", () => {
-
+          return request(app)
+          .delete("/api/events/user1/event/15")
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Event Not Found")
+          })
         })
         test("returns 400 Bad Request when passed an invalid event_id", () => {
-          
+          return request(app)
+          .delete("/api/events/user1/event/test")
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request - Invalid Event")
+          })
+        })
+        test("returns 401 Unauthorized when not staff", () => {
+          return request(app)
+          .delete("/api/events/user2/event/2")
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
+          })
+        })
+        test("returns 401 Unauthorized when not the owner of the event", () => {
+          return request(app)
+          .delete("/api/events/user1/event/1")
+          .expect(401)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Unauthorized")
+          })
         })
       })
     })
