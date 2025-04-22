@@ -5,6 +5,9 @@ const db = require("../../../db/connection.js");
 
 export const insertUser = (newUser: UserInterface) => {
   const { username, email, is_staff, image_url } = newUser;
+  if (!username || !is_staff) {
+    return Promise.reject({status: 400, msg: "Bad Request"})
+  }
   const insertUserQuery = format(`
         INSERT INTO users (username, email, is_staff, image_url)
         VALUES %L RETURNING *`,

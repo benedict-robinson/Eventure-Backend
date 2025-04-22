@@ -695,8 +695,19 @@ describe("Users", () => {
             });
         });
     });
-    xdescribe("POST User - Error Handling", () => {
-
+    describe("POST User - Error Handling", () => {
+      test("POST User - returns 400 bad request when missing required keys", () => {
+        const newUser = {
+          email: "test-email@email.com"
+        }
+        return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({body: {msg}}) => {
+          expect(msg).toBe("Bad Request")
+        })
+      })
     })
   });
 });
