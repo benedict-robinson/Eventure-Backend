@@ -8,7 +8,6 @@ export const postUser = (req: Request, res: Response, next: NextFunction) => {
         res.status(201).send({user: response})
     })
     .catch((err: any) => {
-        console.log(err)
         next(err)
     })
 }
