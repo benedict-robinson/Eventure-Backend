@@ -803,5 +803,15 @@ describe("Users", () => {
         })
       })
     })
+    describe("DELETE user - error handling", () => {
+      test("returns 404 when passed a non-existent username", () => {
+        return request(app)
+      .delete("/api/users/test-username")
+      .expect(404)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("User Not Found")
+      })
+      })
+    })
   })
 });
