@@ -244,6 +244,62 @@ describe("Events", () => {
           })
         })
     })
+    describe("GET events by event_id", () => {
+      test("Get Event by event_id returns correct event", () => {
+        const event3 = {
+          event_id: 3,
+          api_event_id: null,
+          name: "JavaScript Conference 2025",
+          location: {
+            city: "San Francisco",
+            country: "USA",
+            country_code: "US"
+          },
+          date_and_time: {
+            start_date: "2025-06-12",
+            start_time: 9,
+            end_date: "2025-06-14",
+            end_time: 17,
+            timezone: "PST"
+          },
+          tags: ["tech", "javascript", "conference"],
+          img: {
+              url: "https://example.com/jsconf.png",
+              ratio: "3_2",
+              width: 1024,
+              height: 683
+            },
+          info: "The biggest JS conference of the year.",
+          description: "Speakers from top companies, hands-on workshops, and cool swag.",
+          url: "https://ticket.link/event/jsconf"
+        }
+        return request(app)
+        .get("/api/events/event/3")
+        .expect(200)
+        .then(({body: {event}}) => {
+          // console.log(body)
+          expect(event).toEqual(event3)
+        })
+      })
+      describe("GET Event by event_id - error handling", () => {
+        test("returns 404 not found when passed non-existent event", () => {
+          return request(app)
+          .get("/api/events/event/19")
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Event Not Found")
+          })
+        })
+        test("returns 400 not found when passed an invalid event id", () => {
+          return request(app)
+          .get("/api/events/event/test")
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request")
+          })
+        })
+      })
+    })
     describe("POST events by username", () => {
       test("Post Event - returns user_my_events entry", () => {
         const newEvent = {
