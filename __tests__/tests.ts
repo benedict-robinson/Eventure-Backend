@@ -567,7 +567,23 @@ describe("Events", () => {
               expect(filteredRows).toHaveLength(0);
             });
         });
-    });
+    })
+    test("DELETE events - deletes from user_my_events", () => {
+      return request(app)
+      .delete("/api/events/user1/event/2")
+      .expect(202)
+      .then(() => {
+        return db
+          .query("SELECT * FROM user_my_events")
+          .then(({ rows }: { rows: {user_id: number, event_id: number}[] }) => {
+            rows.forEach((e) => {
+              expect(e.event_id);
+            });
+            const filteredRows = rows.filter((e) => e.event_id === 2);
+            expect(filteredRows).toHaveLength(0);
+          });
+      });
+    })
     describe("DELETE events - error testing", () => {
       test("returns 404 when passed non-existent event_id", () => {
         return request(app)
