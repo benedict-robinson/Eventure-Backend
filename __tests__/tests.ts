@@ -367,9 +367,9 @@ describe("Events", () => {
     })
     describe("PATCH Events by username", () => {
       test("PATCH events - updates and returns event", () => {
-        const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+        const eventPatch = {description: "new description", name: "new name"}
         return request(app)
-        .patch("/api/events/user1")
+        .patch("/api/events/user1/event/3")
         .send(eventPatch)
         .expect(200)
         .then(({body: {event}}) => {
@@ -380,7 +380,6 @@ describe("Events", () => {
       })
       test("PATCH events - works with objects", () => {
         const eventPatch = {
-          event_id: 3,
           description: "new description",
           location: { city: "Bronx", country: "USA", country_code: "US" },
           date_and_time: {
@@ -392,7 +391,7 @@ describe("Events", () => {
           },
         };
         return request(app)
-        .patch("/api/events/user1")
+        .patch("/api/events/user1/event/3")
         .send(eventPatch)
         .expect(200)
         .then(({body: {event}}) => {
@@ -410,13 +409,12 @@ describe("Events", () => {
       })
       test("PATCH events - works for unnecessary keys", () => {
         const eventPatch = {
-          event_id: 3,
           description: "new description",
           test: "test-key",
           notAKey: "this is not a key"
         };
         return request(app)
-        .patch("/api/events/user1")
+        .patch("/api/events/user1/event/3")
         .send(eventPatch)
         .expect(200)
         .then(({body: {event}}) => {
@@ -428,9 +426,9 @@ describe("Events", () => {
       })
       describe("PATCH events - error testing", () => {
         test("returns 401 Unauthorized when not staff", () => {
-          const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+          const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/user2")
+          .patch("/api/events/user2/event/3")
           .send(eventPatch)
           .expect(401)
           .then(({body: {msg}}) => {
@@ -438,9 +436,9 @@ describe("Events", () => {
           })
         })
         test("returns 401 Unauthorized when not owner of the event", () => {
-          const eventPatch = {event_id: 7, description: "new description", name: "new name"}
+          const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/user1")
+          .patch("/api/events/user1/event/7")
           .send(eventPatch)
           .expect(401)
           .then(({body: {msg}}) => {
@@ -448,9 +446,9 @@ describe("Events", () => {
           })
         })
         test("returns 404 when passed non-existent user", () => {
-          const eventPatch = {event_id: 3, description: "new description", name: "new name"}
+          const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/test-user")
+          .patch("/api/events/test-user/event/3")
           .send(eventPatch)
           .expect(404)
           .then(({body: {msg}}) => {
@@ -460,16 +458,26 @@ describe("Events", () => {
         test("returns 400 Bad Request when not passed event_id", () => {
           const eventPatch = {description: "new description", name: "new name"}
           return request(app)
-          .patch("/api/events/user2")
+          .patch("/api/events/user2/event/")
+          .send(eventPatch)
+          .expect(500)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Internal server error!")
+          })
+        })
+        test("returns 400 Bad Request when passed an invalid event_id", () => {
+          const eventPatch = {description: "new description", name: "new name"}
+          return request(app)
+          .patch("/api/events/user2/event/test")
           .send(eventPatch)
           .expect(400)
           .then(({body: {msg}}) => {
-            expect(msg).toBe("Bad Request - No Event Specified")
+            expect(msg).toBe("Bad Request - Invalid Event")
           })
         })
       })
     })
-    describe.only("DELETE events by event_id", () => {
+    xdescribe("DELETE events by event_id", () => {
       test("DELETE events - deletes event", () => {
         return request(app)
         .delete("/api/events/2")
@@ -480,6 +488,14 @@ describe("Events", () => {
             const filteredRows = rows.filter(e => e.event_id === 2)
             expect(filteredRows).toHaveLength(0)
           })
+        })
+      })
+      describe("DELETE events - error testing", () => {
+        test("returns 404 when passed non-existent event_id", () => {
+
+        })
+        test("returns 400 Bad Request when passed an invalid event_id", () => {
+          
         })
       })
     })

@@ -8,7 +8,7 @@ const eventsRouter: Router = express.Router();
 
 eventsRouter.get("/", getEvents)
 eventsRouter.post("/:username", postEvent)
-eventsRouter.patch("/:username", patchEvents)
-eventsRouter.delete("/:event_id", deleteEvents)
+eventsRouter.patch("/:username/event/:event_id", patchEvents)
+eventsRouter.delete("/:username/event/:event_id", deleteEvents)
 
 export { eventsRouter };
