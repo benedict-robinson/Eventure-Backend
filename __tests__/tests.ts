@@ -789,4 +789,29 @@ describe("Users", () => {
       })
     })
   })
+  describe.only("DELETE user by username", () => {
+    test("DELETE user by username deletes specified user", () => {
+      return request(app)
+      .delete("/api/users/user2")
+      .expect(200)
+      .then(() => {
+        return db.query("SELECT * FROM users")
+        .then(({rows}: {rows: UserInterface[]}) => {
+          const filteredUsers = rows.filter(e => e.username === "user2")
+          expect(filteredUsers).toHaveLength(0)
+          expect(rows).toHaveLength(2)
+        })
+      })
+    })
+    describe("DELETE user - error handling", () => {
+      test("returns 404 when passed a non-existent username", () => {
+        return request(app)
+      .delete("/api/users/test-username")
+      .expect(404)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("User Not Found")
+      })
+      })
+    })
+  })
 });
