@@ -708,7 +708,7 @@ describe("Users", () => {
           expect(msg).toBe("Bad Request")
         })
       })
-      test.only("returns 400 bad request when attempting to use same username as another user", () => {
+      test("returns 400 bad request when attempting to use same username as another user", () => {
         const newUser = {
           username: "user3",
           email: "test@example.com",
@@ -727,7 +727,50 @@ describe("Users", () => {
   });
   describe("PATCH user by username", () => {
     test("PATCH User by username - updates user correctly", () => {
-
+      const newUser = {image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"}
+      const testUser = {
+        user_id: 2,
+        username: "user2",
+        email: "user2@example.com",
+        is_staff: false,
+        image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"
+      }
+      return request(app)
+      .patch("/api/users/user2")
+      .send(newUser)
+      .expect(200)
+      .then(({body: {user}}) => {
+        expect(user).toEqual(testUser)
+      })
+    })
+    describe("PATCH user - error handling", () => {
+      test("returns 404 when given non-existent username", () => {
+        const newUser = {image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"}
+        return request(app)
+        .patch("/api/users/test-user")
+        .send(newUser)
+        .expect(404)
+        .then(({body: {msg}}) => {
+          expect(msg).toBe("User Not Found")
+        })
+      })
+      test("does not update user_id", () => {
+        const newUser = {user_id: 9, image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"}
+        const testUser = {
+          user_id: 2,
+          username: "user2",
+          email: "user2@example.com",
+          is_staff: false,
+          image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"
+        }
+        return request(app)
+        .patch("/api/users/user2")
+        .send(newUser)
+        .expect(200)
+        .then(({body: {user}}) => {
+          expect(user).toEqual(testUser)
+        })
+      })
     })
   })
 });
