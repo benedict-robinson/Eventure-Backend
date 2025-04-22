@@ -6,7 +6,6 @@ export const inputErrorHandler = (
     res: Response,
     next: NextFunction
   ) => {
-    console.log("here")
     res.status(400).send({ msg: "Invalid input" });
     next(err);
   };

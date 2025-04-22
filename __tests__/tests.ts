@@ -708,6 +708,26 @@ describe("Users", () => {
           expect(msg).toBe("Bad Request")
         })
       })
+      test.only("returns 400 bad request when attempting to use same username as another user", () => {
+        const newUser = {
+          username: "user3",
+          email: "test@example.com",
+          is_staff: true,
+          image_url: "https://avatar.iran.liara.run/public/boy?username=Ash",
+        }
+        return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({body: {msg}}) => {
+          expect(msg).toBe("Bad Request")
+        })
+      })
     })
   });
+  describe("PATCH user by username", () => {
+    test("PATCH User by username - updates user correctly", () => {
+
+    })
+  })
 });
