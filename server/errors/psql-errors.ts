@@ -6,7 +6,8 @@ export const psqlErrorHandler = (
     res: Response,
     next: NextFunction
   ) => {
-    if (err.code === "23505") {
+    const errors = ["23505", "42601", "23502", "22P02"]
+    if (errors.includes(err.code)) {
       res.status(400).send({ msg: "Bad Request" });
     } else next(err);
   };
