@@ -1,6 +1,10 @@
 {
+  "main": "listen.ts",
   "scripts": {
-    "test": "jest"
+    "start": "ts-node listen.ts",
+    "test": "jest",
+    "seed": "ts-node db/seed/run-seed.ts",
+    "seed-prod": "NODE_ENV=production npm run seed"
   },
   "dependencies": {
     "axios": "^1.8.4",
