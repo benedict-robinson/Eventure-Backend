@@ -4,6 +4,7 @@ import { inputErrorHandler } from "../errors/input-error";
 import { usersRouter } from "./users-router";
 import { favouritesRouter } from "./favourite-router";
 import { goingRouter } from "./going-router";
+import { myEventsRouter } from "./my-events-router";
 
 const apiRouter: Router = express.Router();
 
@@ -16,6 +17,7 @@ apiRouter.use("/events", eventsRouter)
 apiRouter.use("/users", usersRouter)
 apiRouter.use("/favourites", favouritesRouter)
 apiRouter.use("/going", goingRouter)
+apiRouter.use("/my-events", myEventsRouter)
 
 
 
