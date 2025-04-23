@@ -11,7 +11,7 @@ if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
 
 
 
-const config = {};
+const config: any = {};
 
 if (ENV === "production") {
   config.connectionString = process.env.DATABASE_URL;
