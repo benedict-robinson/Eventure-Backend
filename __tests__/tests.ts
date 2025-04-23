@@ -994,7 +994,7 @@ describe("Join Tables", () => {
   });
   describe("going", () => {
     describe("GET going by user_id", () => {
-      test("GET going by user_id returns an array of events favourited by user", () => {
+      test("GET going by user_id returns an array of events marked going by user", () => {
         return request(app)
           .get("/api/going/1")
           .expect(200)
@@ -1152,4 +1152,41 @@ describe("Join Tables", () => {
       })
     })
   });
+  describe("my events", () => {
+    describe("GET my_events by user_id", () => {
+      test("GET my_events by user_id returns an array of events owned by user", () => {
+        return request(app)
+          .get("/api/my-events/1")
+          .expect(200)
+          .then(({ body: { events } }) => {
+            const eventIds = events.map((e: EventInterface) => e.event_id);
+            expect(eventIds).toEqual([2, 3]);
+          });
+      });
+      test("GET my_events - returns 404 when given non-existent user", () => {
+        return request(app)
+          .get("/api/my-events/45")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("User Not Found");
+          });
+      });
+      test("GET my_events - returns 400 when given invalid user_id", () => {
+        return request(app)
+          .get("/api/my-events/test")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request - Invalid User");
+          });
+      });
+      test("GET my_events - returns 401 when given non-staff user", () => {
+        return request(app)
+          .get("/api/my-events/2")
+          .expect(401)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Unauthorized");
+          });
+      });
+    });
+  })
 });
