@@ -80,7 +80,7 @@ describe("Test Seed Function", () => {
         });
       });
   });
-  test("Should insert 3 values into user_my_events with correct keys", () => {
+  test("Should insert 3 values into user_going with correct keys", () => {
     return db
       .query("SELECT * FROM user_going")
       .then(({ rows }: { rows: { user_id: number; event_id: number }[] }) => {
@@ -984,6 +984,166 @@ describe("Join Tables", () => {
         test("returns 404 Not Found with non-existent event_id", () => {
           return request(app)
           .delete("/api/favourites/3/event/3790")
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Not Found")
+          })
+        })
+      })
+    })
+  });
+  describe("going", () => {
+    describe("GET going by user_id", () => {
+      test("GET going by user_id returns an array of events favourited by user", () => {
+        return request(app)
+          .get("/api/going/1")
+          .expect(200)
+          .then(({ body: { events } }) => {
+            const eventIds = events.map((e: EventInterface) => e.event_id);
+            expect(eventIds).toEqual([2, 3]);
+          });
+      });
+      test("GET going - returns 400 when given non-existent user", () => {
+        return request(app)
+          .get("/api/going/45")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("GET going - returns 400 when given invalid user_id", () => {
+        return request(app)
+          .get("/api/going/test")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request - Invalid User");
+          });
+      });
+    });
+    describe("POST going", () => {
+      test("POST going by user_id adds a new favourite event to the going table", () => {
+        const newFave = { event_id: 6, user_id: 3 };
+        return request(app)
+          .post("/api/going/3")
+          .send(newFave)
+          .expect(201)
+          .then(({ body: { favourite } }) => {
+            expect(favourite).toEqual(newFave);
+            return db
+              .query("SELECT * FROM user_going")
+              .then(
+                ({
+                  rows,
+                }: {
+                  rows: { event_id: number; user_id: number }[];
+                }) => {
+                  expect(rows).toHaveLength(4);
+                }
+              );
+          });
+      });
+      describe("POST favourite - error handling", () => {
+        test("returns 401 Unauthorized when user_id does not match in the body", () => {
+          const newFave = { event_id: 6, user_id: 3 };
+          return request(app)
+            .post("/api/going/2")
+            .send(newFave)
+            .expect(401)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Unauthorized");
+            });
+        })
+        test("returns 400 Bad request when missing a required key", () => {
+          const newFave = { user_id: 3 };
+          return request(app)
+            .post("/api/going/3")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request");
+            });
+        })
+        test("returns 400 Bad request when passed an invalid user_id in url", () => {
+          const newFave = { event_id: 6, user_id: 3 };
+          return request(app)
+            .post("/api/going/test")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request - Invalid User");
+            });
+        })
+        test("returns 400 Bad request when passed an invalid value in body", () => {
+          const newFave = { event_id: "six", user_id: 3 };
+          return request(app)
+            .post("/api/going/3")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request");
+            });
+        })
+        test("returns 404 User Not Found when passed a non-existent user", () => {
+          const newFave = { event_id: 6, user_id: 32 };
+          return request(app)
+            .post("/api/going/32")
+            .send(newFave)
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("User Not Found");
+            });
+        })
+        test("returns 400 Bad request when attempting to insert a duplicate", () => {
+          const newFave = { event_id: 3, user_id: 2 };
+          return request(app)
+            .post("/api/going/2")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request");
+            });
+        })
+      });
+    });
+    describe("DELETE favourite", () => {
+      test("DELETE going - deletes favourite from table", () => {
+        return request(app)
+        .delete("/api/going/1/event/3")
+        .expect(200)
+        .then(() => {
+          return db.query("SELECT event_id FROM user_going").then(({rows}: {rows: {event_id: number}[]}) => {
+            expect(rows).toHaveLength(2)
+          })
+        })
+      })
+      describe("DELETE going - error handling", () => {
+        test("returns 400 Bad Request with invalid user_id", () => {
+          return request(app)
+          .delete("/api/going/test/event/3")
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request")
+          })
+        })
+        test("returns 400 Bad Request with invalid event_id", () => {
+          return request(app)
+          .delete("/api/going/1/event/test")
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request")
+          })
+        })
+        test("returns 404 Not Found with non-existent user_id", () => {
+          return request(app)
+          .delete("/api/going/35/event/3")
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Not Found")
+          })
+        })
+        test("returns 404 Not Found with non-existent event_id", () => {
+          return request(app)
+          .delete("/api/going/3/event/3790")
           .expect(404)
           .then(({body: {msg}}) => {
             expect(msg).toBe("Not Found")
