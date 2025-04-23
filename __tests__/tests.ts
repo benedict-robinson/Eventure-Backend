@@ -945,5 +945,51 @@ describe("Join Tables", () => {
         })
       });
     });
+    describe("DELETE favourite", () => {
+      test("DELETE favourites - deletes favourite from table", () => {
+        return request(app)
+        .delete("/api/favourites/1/event/3")
+        .expect(200)
+        .then(() => {
+          return db.query("SELECT event_id FROM user_favourites").then(({rows}: {rows: {event_id: number}[]}) => {
+            expect(rows).toHaveLength(5)
+          })
+        })
+      })
+      describe("DELETE favourites - error handling", () => {
+        test("returns 400 Bad Request with invalid user_id", () => {
+          return request(app)
+          .delete("/api/favourites/test/event/3")
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request")
+          })
+        })
+        test("returns 400 Bad Request with invalid event_id", () => {
+          return request(app)
+          .delete("/api/favourites/1/event/test")
+          .expect(400)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Bad Request")
+          })
+        })
+        test("returns 404 Not Found with non-existent user_id", () => {
+          return request(app)
+          .delete("/api/favourites/35/event/3")
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Not Found")
+          })
+        })
+        test("returns 404 Not Found with non-existent event_id", () => {
+          return request(app)
+          .delete("/api/favourites/3/event/3790")
+          .expect(404)
+          .then(({body: {msg}}) => {
+            expect(msg).toBe("Not Found")
+          })
+        })
+      })
+    })
   });
 });
