@@ -1,6 +1,6 @@
 import { EventInterface } from "../../../db/data/events"
 
-const db = require("../../../db/connection.js")
+const db = require("../../../db/connection")
 
 export const selectEventById = (eventId: number) => {
     return db.query("SELECT * FROM events WHERE event_id = $1", [eventId])

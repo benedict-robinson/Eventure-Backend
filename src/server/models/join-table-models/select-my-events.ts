@@ -1,7 +1,7 @@
 import format from "pg-format";
 import { EventInterface } from "../../../db/data/events";
 
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 
 
 export const selectMyEvents = (userId: number) => {

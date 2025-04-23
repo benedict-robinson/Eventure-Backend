@@ -4,7 +4,7 @@ import { UserInterface } from "../../../db/data/users";
 import { selectUserByUsername } from "../users-models/select-users";
 import { formatArray } from "../../../utils";
 
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 
 export const insertEvent = (username: string, newEvent: EventInterface) => {
   return selectUserByUsername(username).then(

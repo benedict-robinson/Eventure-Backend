@@ -1,8 +1,6 @@
-import { response } from "express";
 import { UserInterface } from "../../../db/data/users";
-import { EventInterface } from "../../../db/data/events";
 
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 
 export const deleteEventById = (eventId: number, username: string) => {
   return db

@@ -1,4 +1,4 @@
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 import { EventInterface } from "../../../db/data/events";
 import { getTicketmasterEvents } from "../../ticketmaster-requests/get-events-request";
 import { formatArray } from "../../../utils";

@@ -2,7 +2,7 @@ import format from "pg-format";
 import { UserInterface } from "../../../db/data/users";
 import { selectUserByUsername } from "./select-users";
 
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 
 export const updateUser = (username: string, newUser: any) => {
   return selectUserByUsername(username).then(

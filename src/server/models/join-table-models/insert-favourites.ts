@@ -1,6 +1,6 @@
 import format from "pg-format";
 
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 
 export const insertFavourites = (newFave: {event_id: number, user_id: number}) => {
     return db.query("SELECT user_id FROM users WHERE user_id = $1", [newFave.user_id])

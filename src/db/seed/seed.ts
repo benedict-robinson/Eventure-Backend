@@ -1,4 +1,4 @@
-const db = require("../connection.js");
+const db = require("../connection");
 const format = require("pg-format");
 import { EventInterface } from "../data/events";
 import { UserInterface } from "../data/users";

@@ -1,7 +1,7 @@
 import format from "pg-format";
 import { UserInterface } from "../../../db/data/users";
 
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 
 export const insertUser = (newUser: UserInterface) => {
   const { username, email, is_staff, image_url } = newUser;

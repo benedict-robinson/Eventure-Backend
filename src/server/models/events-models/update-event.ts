@@ -1,4 +1,4 @@
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 import { selectUserByUsername } from "../users-models/select-users";
 import { UserInterface } from "../../../db/data/users";
 import format from "pg-format";

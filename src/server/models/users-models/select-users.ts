@@ -1,5 +1,4 @@
-const db = require("../../../db/connection.js");
-import format from "pg-format";
+const db = require("../../../db/connection");
 import { UserInterface } from "../../../db/data/users";
 
 export const selectUsers = () => {

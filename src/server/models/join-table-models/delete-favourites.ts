@@ -1,4 +1,4 @@
-const db = require("../../../db/connection.js");
+const db = require("../../../db/connection");
 
 export const deleteFavouritesById = (userId: number, eventId: number) => {
     const deleteQuery = "DELETE FROM user_favourites WHERE user_id = $1 AND event_id = $2 RETURNING *"

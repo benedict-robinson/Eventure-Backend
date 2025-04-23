@@ -1,7 +1,6 @@
-import { response } from "express"
 import { UserInterface } from "../../../db/data/users"
 
-const db = require("../../../db/connection.js")
+const db = require("../../../db/connection")
 
 export const deleteUserByUsername = (username: string) => {
     return db.query("DELETE FROM users WHERE username = $1 RETURNING *", [username])

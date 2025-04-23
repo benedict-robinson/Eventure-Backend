@@ -4,7 +4,7 @@ import { UserInterface } from "../src/db/data/users";
 import { seed } from "../src/db/seed/seed";
 import request from "supertest";
 import app from "../src/server/app";
-const db = require("../db/connection.js");
+const db = require("../src/db/connection")
 
 beforeEach(async () => {
   await seed(users, events);
