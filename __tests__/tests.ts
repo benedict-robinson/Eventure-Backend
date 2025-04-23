@@ -3,9 +3,7 @@ import { EventInterface } from "../src/db/data/events";
 import { UserInterface } from "../src/db/data/users";
 import { seed } from "../src/db/seed/seed";
 import request from "supertest";
-import app from "../server/app";
-import { postUser } from "../server/controllers/users-controllers/post-user";
-import { insertUser } from "../server/models/users-models/insert-user";
+import app from "../src/server/app";
 const db = require("../db/connection.js");
 
 beforeEach(async () => {
