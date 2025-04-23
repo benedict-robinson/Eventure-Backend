@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, response } from "express";
-import { deleteGoingById } from "../../models/join-table-models/delete-going.ts";
+import { deleteGoingById } from "../../models/join-table-models/delete-going";
 
 export const deleteGoing = (req: Request, res: Response, next: NextFunction) => {
     const {user_id, event_id} = req.params

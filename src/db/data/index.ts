@@ -1,4 +1,4 @@
-import users from "./users.ts"
-import events from "./events.ts"
+import users from "./users"
+import events from "./events"
 
 export { users, events }

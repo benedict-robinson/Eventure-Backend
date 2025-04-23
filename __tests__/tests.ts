@@ -1,11 +1,11 @@
-import { users, events } from "../src/db/data/index.ts";
-import { EventInterface } from "../src/db/data/events.ts";
-import { UserInterface } from "../src/db/data/users.ts";
-import { seed } from "../src/db/seed/seed.ts";
+import { users, events } from "../src/db/data/index";
+import { EventInterface } from "../src/db/data/events";
+import { UserInterface } from "../src/db/data/users";
+import { seed } from "../src/db/seed/seed";
 import request from "supertest";
-import app from "../server/app.ts";
-import { postUser } from "../server/controllers/users-controllers/post-user.ts";
-import { insertUser } from "../server/models/users-models/insert-user.ts";
+import app from "../server/app";
+import { postUser } from "../server/controllers/users-controllers/post-user";
+import { insertUser } from "../server/models/users-models/insert-user";
 const db = require("../db/connection.js");
 
 beforeEach(async () => {

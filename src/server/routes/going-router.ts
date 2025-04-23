@@ -1,7 +1,7 @@
 import express, { Router } from "express";
-import { getGoing } from "../controllers/join-table-controllers/get-going.ts";
-import { postGoing } from "../controllers/join-table-controllers/post-going.ts";
-import { deleteGoing } from "../controllers/join-table-controllers/delete-going.ts";
+import { getGoing } from "../controllers/join-table-controllers/get-going";
+import { postGoing } from "../controllers/join-table-controllers/post-going";
+import { deleteGoing } from "../controllers/join-table-controllers/delete-going";
 
 const goingRouter: Router = express.Router();
 
