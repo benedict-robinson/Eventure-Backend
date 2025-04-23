@@ -2,9 +2,9 @@
   "main": "listen.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node listen.js",
+    "start": "node src/listen.js",
     "test": "jest",
-    "seed": "ts-node db/seed/run-seed.ts",
+    "seed": "ts-node src/db/seed/run-seed.ts",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
   "dependencies": {
