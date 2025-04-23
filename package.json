@@ -2,7 +2,7 @@
   "main": "listen.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node src/listen.js",
+    "start": "node listen.js",
     "test": "jest",
     "seed": "ts-node src/db/seed/run-seed.ts",
     "seed-prod": "NODE_ENV=production npm run seed"
