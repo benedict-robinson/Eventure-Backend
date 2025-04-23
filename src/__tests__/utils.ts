@@ -1,4 +1,4 @@
-import { formatArray } from "../utils";
+import { formatArray } from "../../utils";
 
 describe('formatArray', () => { 
     test("Should return empty object string if passed an empty array", () => {

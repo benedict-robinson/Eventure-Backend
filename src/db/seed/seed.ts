@@ -2,7 +2,7 @@ const db = require("../connection.js");
 const format = require("pg-format");
 import { EventInterface } from "../data/events";
 import { UserInterface } from "../data/users";
-import { formatArray } from "../../utils";
+import { formatArray } from "../../../utils";
 
 export const seed = (
   userData: UserInterface[],

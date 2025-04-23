@@ -33,7 +33,7 @@
     //"module": "commonjs", <-- OG
     "module": "NodeNext",
     //END                                /* Specify what module code is generated. */
-    // "rootDir": "./",  
+    "rootDir": "src",  
     // MY EDITS                                /* Specify the root folder within your source files. */
     // "moduleResolution": "node10",   <--OG                  /* Specify how TypeScript looks up a file from a given module specifier. */
       "moduleResolution": "NodeNext",
@@ -117,5 +117,6 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+  },
+  "include": ["src"]
 }
