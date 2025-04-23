@@ -569,23 +569,25 @@ describe("Events", () => {
               expect(filteredRows).toHaveLength(0);
             });
         });
-    })
+    });
     test("DELETE events - deletes from user_my_events", () => {
       return request(app)
-      .delete("/api/events/user1/event/2")
-      .expect(202)
-      .then(() => {
-        return db
-          .query("SELECT * FROM user_my_events")
-          .then(({ rows }: { rows: {user_id: number, event_id: number}[] }) => {
-            rows.forEach((e) => {
-              expect(e.event_id);
-            });
-            const filteredRows = rows.filter((e) => e.event_id === 2);
-            expect(filteredRows).toHaveLength(0);
-          });
-      });
-    })
+        .delete("/api/events/user1/event/2")
+        .expect(202)
+        .then(() => {
+          return db
+            .query("SELECT * FROM user_my_events")
+            .then(
+              ({ rows }: { rows: { user_id: number; event_id: number }[] }) => {
+                rows.forEach((e) => {
+                  expect(e.event_id);
+                });
+                const filteredRows = rows.filter((e) => e.event_id === 2);
+                expect(filteredRows).toHaveLength(0);
+              }
+            );
+        });
+    });
     describe("DELETE events - error testing", () => {
       test("returns 404 when passed non-existent event_id", () => {
         return request(app)
@@ -696,7 +698,7 @@ describe("Users", () => {
     test("POST user - works with only required keys", () => {
       const newUser: UserInterface = {
         username: "test-user",
-        is_staff: true
+        is_staff: true,
       };
       return request(app)
         .post("/api/users")
@@ -716,106 +718,117 @@ describe("Users", () => {
     describe("POST User - Error Handling", () => {
       test("POST User - returns 400 bad request when missing required keys", () => {
         const newUser = {
-          email: "test-email@email.com"
-        }
+          email: "test-email@email.com",
+        };
         return request(app)
-        .post("/api/users")
-        .send(newUser)
-        .expect(400)
-        .then(({body: {msg}}) => {
-          expect(msg).toBe("Bad Request")
-        })
-      })
+          .post("/api/users")
+          .send(newUser)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
       test("returns 400 bad request when attempting to use same username as another user", () => {
         const newUser = {
           username: "user3",
           email: "test@example.com",
           is_staff: true,
           image_url: "https://avatar.iran.liara.run/public/boy?username=Ash",
-        }
+        };
         return request(app)
-        .post("/api/users")
-        .send(newUser)
-        .expect(400)
-        .then(({body: {msg}}) => {
-          expect(msg).toBe("Bad Request")
-        })
-      })
-    })
+          .post("/api/users")
+          .send(newUser)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
   });
   describe("PATCH user by username", () => {
     test("PATCH User by username - updates user correctly", () => {
-      const newUser = {image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"}
+      const newUser = {
+        image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie",
+      };
       const testUser = {
         user_id: 2,
         username: "user2",
         email: "user2@example.com",
         is_staff: false,
-        image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"
-      }
+        image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie",
+      };
       return request(app)
-      .patch("/api/users/user2")
-      .send(newUser)
-      .expect(200)
-      .then(({body: {user}}) => {
-        expect(user).toEqual(testUser)
-      })
-    })
+        .patch("/api/users/user2")
+        .send(newUser)
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toEqual(testUser);
+        });
+    });
     describe("PATCH user - error handling", () => {
       test("returns 404 when given non-existent username", () => {
-        const newUser = {image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"}
+        const newUser = {
+          image_url:
+            "https://avatar.iran.liara.run/public/boy?username=Charlie",
+        };
         return request(app)
-        .patch("/api/users/test-user")
-        .send(newUser)
-        .expect(404)
-        .then(({body: {msg}}) => {
-          expect(msg).toBe("User Not Found")
-        })
-      })
+          .patch("/api/users/test-user")
+          .send(newUser)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("User Not Found");
+          });
+      });
       test("does not update user_id", () => {
-        const newUser = {user_id: 9, image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"}
+        const newUser = {
+          user_id: 9,
+          image_url:
+            "https://avatar.iran.liara.run/public/boy?username=Charlie",
+        };
         const testUser = {
           user_id: 2,
           username: "user2",
           email: "user2@example.com",
           is_staff: false,
-          image_url: "https://avatar.iran.liara.run/public/boy?username=Charlie"
-        }
+          image_url:
+            "https://avatar.iran.liara.run/public/boy?username=Charlie",
+        };
         return request(app)
-        .patch("/api/users/user2")
-        .send(newUser)
-        .expect(200)
-        .then(({body: {user}}) => {
-          expect(user).toEqual(testUser)
-        })
-      })
-    })
-  })
+          .patch("/api/users/user2")
+          .send(newUser)
+          .expect(200)
+          .then(({ body: { user } }) => {
+            expect(user).toEqual(testUser);
+          });
+      });
+    });
+  });
   describe("DELETE user by username", () => {
     test("DELETE user by username deletes specified user", () => {
       return request(app)
-      .delete("/api/users/user2")
-      .expect(200)
-      .then(() => {
-        return db.query("SELECT * FROM users")
-        .then(({rows}: {rows: UserInterface[]}) => {
-          const filteredUsers = rows.filter(e => e.username === "user2")
-          expect(filteredUsers).toHaveLength(0)
-          expect(rows).toHaveLength(2)
-        })
-      })
-    })
+        .delete("/api/users/user2")
+        .expect(200)
+        .then(() => {
+          return db
+            .query("SELECT * FROM users")
+            .then(({ rows }: { rows: UserInterface[] }) => {
+              const filteredUsers = rows.filter((e) => e.username === "user2");
+              expect(filteredUsers).toHaveLength(0);
+              expect(rows).toHaveLength(2);
+            });
+        });
+    });
     describe("DELETE user - error handling", () => {
       test("returns 404 when passed a non-existent username", () => {
         return request(app)
-      .delete("/api/users/test-username")
-      .expect(404)
-      .then(({body: {msg}}) => {
-        expect(msg).toBe("User Not Found")
-      })
-      })
-    })
-  })
+          .delete("/api/users/test-username")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("User Not Found");
+          });
+      });
+    });
+  });
 });
 
 describe("Join Tables", () => {
@@ -823,29 +836,114 @@ describe("Join Tables", () => {
     describe("GET favourites by user_id", () => {
       test("GET favourites by user_id returns an array of events favourited by user", () => {
         return request(app)
-        .get("/api/favourites/1")
-        .expect(200)
-        .then(({body: {events}}) => {
-          const eventIds = events.map((e: EventInterface) => e.event_id)
-          expect(eventIds).toEqual([1, 3, 6])
-        })
-      })
+          .get("/api/favourites/1")
+          .expect(200)
+          .then(({ body: { events } }) => {
+            const eventIds = events.map((e: EventInterface) => e.event_id);
+            expect(eventIds).toEqual([1, 3, 6]);
+          });
+      });
       test("GET favourites - returns 400 when given non-existent user", () => {
         return request(app)
-        .get("/api/favourites/45")
-        .expect(400)
-        .then(({body: {msg}}) => {
-          expect(msg).toBe("Bad Request")
-        })
-      })
+          .get("/api/favourites/45")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
       test("GET favourites - returns 400 when given invalid user_id", () => {
         return request(app)
-        .get("/api/favourites/test")
-        .expect(400)
-        .then(({body: {msg}}) => {
-          expect(msg).toBe("Bad Request - Invalid User")
+          .get("/api/favourites/test")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request - Invalid User");
+          });
+      });
+    });
+    describe("POST favourites", () => {
+      test("POST favourites by user_id adds a new favourite event to the favourites table", () => {
+        const newFave = { event_id: 6, user_id: 3 };
+        return request(app)
+          .post("/api/favourites/3")
+          .send(newFave)
+          .expect(201)
+          .then(({ body: { favourite } }) => {
+            expect(favourite).toEqual(newFave);
+            return db
+              .query("SELECT * FROM user_favourites")
+              .then(
+                ({
+                  rows,
+                }: {
+                  rows: { event_id: number; user_id: number }[];
+                }) => {
+                  expect(rows).toHaveLength(7);
+                }
+              );
+          });
+      });
+      describe("POST favourite - error handling", () => {
+        test("returns 401 Unauthorized when user_id does not match in the body", () => {
+          const newFave = { event_id: 6, user_id: 3 };
+          return request(app)
+            .post("/api/favourites/2")
+            .send(newFave)
+            .expect(401)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Unauthorized");
+            });
         })
-      })
-    })
-  })
-})
+        test("returns 400 Bad request when missing a required key", () => {
+          const newFave = { user_id: 3 };
+          return request(app)
+            .post("/api/favourites/3")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request");
+            });
+        })
+        test("returns 400 Bad request when passed an invalid user_id in url", () => {
+          const newFave = { event_id: 6, user_id: 3 };
+          return request(app)
+            .post("/api/favourites/test")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request - Invalid User");
+            });
+        })
+        test("returns 400 Bad request when passed an invalid value in body", () => {
+          const newFave = { event_id: "six", user_id: 3 };
+          return request(app)
+            .post("/api/favourites/3")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request");
+            });
+        })
+        test("returns 404 User Not Found when passed a non-existent user", () => {
+          const newFave = { event_id: 6, user_id: 32 };
+          return request(app)
+            .post("/api/favourites/32")
+            .send(newFave)
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("User Not Found");
+            });
+        })
+        test("returns 400 Bad request when attempting to insert a duplicate", () => {
+          const newFave = { event_id: 5, user_id: 2 };
+          return request(app)
+            .post("/api/favourites/2")
+            .send(newFave)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Bad Request");
+            });
+        })
+      });
+    });
+  });
+});
