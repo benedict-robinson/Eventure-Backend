@@ -21,6 +21,20 @@ const optsGenres = {
     size: 50,
   }
 }
+const optsCities = {
+  method: 'GET',
+  url: "https://app.ticketmaster.com/discovery/v2/events.json",
+  params: {
+    apikey: apiKey,
+    size: 1,
+    facet: "city",
+    countryCode: "GB"
+  }
+}
+axios(optsCities)
+.then(({data: {_embedded}}) => {
+  // console.log(_embedded)
+})
 // Default size is 20 unless specified otherwise
 // url ALWAYS needs apikey
 
@@ -60,7 +74,7 @@ axios(optsEvents)
     })
     //console.log(JSON.stringify(trimmedEvents, null, 2))
     // console.log(events[0])
-    console.log(trimmedEvents)
+    // console.log(trimmedEvents)
     // console.log(events[4])
   })
   .catch(error => {
@@ -69,5 +83,11 @@ axios(optsEvents)
 
   axios(optsGenres)
   .then(({ data: { _embedded: { classifications } } }) => {
-    // console.log(classifications)
+    console.log(classifications)
+    // classifications.forEach(e => {
+    //   if (e.type?.name) {
+    //     console.log(e.type.name)
+    //   }
+    // })
   })
+
