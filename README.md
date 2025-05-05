@@ -1,8 +1,8 @@
-# Event Platform Backend API
+# Eventure - Event Platform Backend API
 
 ## 🧩 Overview
 
-This is the **backend** for the Event Platform Web App. It is a **RESTful API** built using **Node.js** and **Express**, providing endpoints to interact with event data, users, and favourites/going lists.
+This is the **backend** for the Eventure Event Platform Web App. It is a **RESTful API** built using **Node.js** and **Express**, providing endpoints to interact with event data, users, and favourites/going lists.
 
 The API handles CRUD operations for events and users, allows event organisers to manage their events, and supports filtering, favouriting, and tracking event attendance.
 
