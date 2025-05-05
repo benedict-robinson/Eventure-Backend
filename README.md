@@ -192,7 +192,8 @@ npm test
 
 - Ensure you have **PostgreSQL** installed and running, or configure a remote database.
 - You may need to register your app with **Ticketmaster** and **Google APIs** to retrieve external event data or authenticate users.
-- 
+
+---
 
 **Contact**
 
