@@ -195,7 +195,13 @@ npm test
 
 ---
 
-**Contact**
+**Link to the Eventure frontend Web App**
+
+https://github.com/benedict-robinson/Eventure-Frontend
+
+
+
+### Contact
 
 For enquires or support, general or specific, please contact:
 
